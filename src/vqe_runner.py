@@ -90,9 +90,9 @@ class VqeRunner:
 
         if monitor:
             counts = [np.asarray(counts)]
-            values =  [np.asarray(values)]
+            values = [np.asarray(values)]
             optimizers = [self.optimizer]
-            VqeRunner.plot_convergence(counts, values, optimizers)
+            VqeRunner.plot_convergences(counts, values, optimizers)
         return result
 
     @staticmethod
@@ -114,8 +114,8 @@ class VqeRunner:
 
     def compare_optimizers(self):
         """
+        Runs the VQE algorithm with a list of optimizers and plots the convergence graphs
 
-        :return:
         """
         pass
 
