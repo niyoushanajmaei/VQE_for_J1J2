@@ -102,7 +102,7 @@ class VqeRunner:
         return result
 
     @staticmethod
-    def plot_convergences(self, counts: list, values: list, optimizers: list):
+    def plot_convergences(counts: list, values: list, optimizers: list):
         """
         plots the convergence plots for a list of counts and values
 
