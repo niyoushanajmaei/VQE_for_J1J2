@@ -20,10 +20,14 @@ class VqeRunner:
         uncertainty on a quantum computation when finding a minimum. If you are executing a variational algorithm using
         a Quantum ASseMbly Language (QASM) simulator or a real device, SPSA would be the most recommended choice among
         the optimizers provided here.
+
+        lattice_size is a 2 element vector defining the number of rows and columns in the 2D spin lattice
         """
         self.seed = seed
         self.ansatz = ansatz
         self.hamiltonian = Model.get_hamiltonian(lattice_size)
+        self.lattice_size = lattice_size
+        self.N = lattice_size[0]*lattice_size[1]
         if simulation:
             self.optimizer = "SLSQP"
         else:
@@ -59,7 +63,9 @@ class VqeRunner:
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
-        ansatz:QuantumCircuit = SampleAnsatz()
+        # ansatz:QuantumCircuit = SampleAnsatz()
+        ansatz:TwoLocal = SampleAnsatz.get_ansatz(self.N)
+        print(ansatz)
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
