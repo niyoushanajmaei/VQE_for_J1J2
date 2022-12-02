@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from qiskit import Aer
+from qiskit import Aer, QuantumCircuit
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
@@ -102,7 +102,7 @@ class VqeRunner:
         return result
 
     @staticmethod
-    def plot_convergences(counts: list, values: list, optimizers: list):
+    def plot_convergences(counts, values, optimizers, file_name="convergence_graph.png"):
         """
         plots the convergence plots for a list of counts and values
 
@@ -116,14 +116,42 @@ class VqeRunner:
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
         plt.legend(loc='upper right')
-        plt.savefig("convergence_graph.png")
+        plt.savefig(f"{file_name}")
 
-    def compare_optimizers(self):
+    def compare_optimizers_and_ansatze(self):
         """
         Runs the VQE algorithm with a list of optimizers and plots the convergence graphs
 
         """
-        pass
+
+        ansatze = {"two_local": TwoLocalAnsatz.get_ansatz(self.N)}
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=100)]
+
+        seed = self.seed
+        algorithm_globals.random_seed = seed
+        qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
+
+        for name, ansatz in ansatze.items():
+            converge_cnts = np.empty([len(optimizers)], dtype=object)
+            converge_vals = np.empty([len(optimizers)], dtype=object)
+            optimizer_names = []
+            for i, optimizer in enumerate(optimizers):
+                counts = []
+                values = []
+
+                def store_intermediate_results(eval_count, parameters, mean, std):
+                    counts.append(eval_count)
+                    values.append(mean)
+
+                vqe = VQE(ansatz, optimizer, callback=store_intermediate_results, quantum_instance=qi, include_custom=True)
+                result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
+
+                converge_cnts[i] = np.asarray(counts)
+                converge_vals[i] = np.asarray(values)
+                optimizer_names.append(type(optimizer).__name__)
+
+            VqeRunner.plot_convergences(converge_cnts, converge_vals, optimizer_names, file_name=f"{name}")
+
 
 
 class UnvalidOptimizerError(RuntimeError):
