@@ -33,13 +33,8 @@ class Model:
             raise InvalidSizeError
 
         N = m * n
-        # H = np.zeros((2**N, 2**N))
         H1 = 0
         H2 = 0
-
-        # pauli_x = np.array([[0, 1], [1, 0]])
-        # pauli_y = np.array([[0, -1j], [1j, 0]])
-        # pauli_z = np.array([[1, 0], [0, -1]])
 
         # contribution of nearest neighbour, spins X, Y and Z:
         # for pauli in [pauli_x, pauli_y, pauli_z]:
