@@ -23,7 +23,6 @@ class VqeRunner:
         """
         self.seed = seed
         self.ansatz = ansatz
-        self.lattice_size = lattice_size
         self.m = m
         self.n = n
         self.N = m*n
@@ -66,7 +65,7 @@ class VqeRunner:
 
         ansatz:TwoLocal = SampleAnsatz.get_ansatz(self.N)
         print(ansatz)
-        
+
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
