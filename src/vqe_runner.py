@@ -1,5 +1,5 @@
 from qiskit import Aer
-from qiskit.opflow import X, Z, I
+
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
@@ -10,7 +10,7 @@ from src.model import Model
 
 
 class VqeRunner:
-    def __init__(self, lattice_size, simulation = True, seed=50, ansatz="sample_ansatz"):
+    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sample_ansatz"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -23,7 +23,8 @@ class VqeRunner:
         """
         self.seed = seed
         self.ansatz = ansatz
-        self.hamiltonian = Model.get_hamiltonian(lattice_size)
+        self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
+        self.hamiltonian_matrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
         else:
@@ -59,7 +60,7 @@ class VqeRunner:
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
-        ansatz:QuantumCircuit = SampleAnsatz()
+        ansatz:TwoLocal = SampleAnsatz.get_ansatz()
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
@@ -71,6 +72,7 @@ class VqeRunner:
         result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
         optimal_value1 = result.optimal_value
         return result
+
 
 
 class UnvalidOptimizerError(RuntimeError):
