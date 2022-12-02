@@ -76,7 +76,7 @@ class VqeRunner:
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
             # TODO for SPSA, investigate the usage of a user defined gradient
-            slsqp = SPSA(maxiter=100)
+            slsqp = SPSA(maxiter=500)
         else:
             raise UnvalidOptimizerError
 
@@ -98,11 +98,10 @@ class VqeRunner:
             counts = [np.asarray(counts)]
             values = [np.asarray(values)]
             optimizers = [self.optimizer]
-            VqeRunner.plot_convergences(counts, values, optimizers)
+            self.plot_convergences(counts, values, optimizers)
         return result
 
-    @staticmethod
-    def plot_convergences(counts, values, optimizers, file_name="convergence_graph.png"):
+    def plot_convergences(self, counts, values, optimizers, file_name="convergence_graph.png"):
         """
         plots the convergence plots for a list of counts and values
 
@@ -112,11 +111,15 @@ class VqeRunner:
         plt.figure(figsize=(12, 8))
         for i, optimizer in enumerate(optimizers):
             plt.plot(counts[i], values[i], label=optimizer)
+
+        # plotting exact value
+        plt.axhline(y=Model.get_exact_energy(self.hamiltonian_matrix), color='r', linestyle='-', label="exact energy")
+
         plt.xlabel('Eval count')
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
         plt.legend(loc='upper right')
-        plt.savefig(f"{file_name}")
+        plt.savefig(f"graphs/{file_name}")
 
     def compare_optimizers_and_ansatze(self):
         """
@@ -125,7 +128,7 @@ class VqeRunner:
         """
 
         ansatze = {"two_local": TwoLocalAnsatz.get_ansatz(self.N)}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=100)]
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -150,8 +153,7 @@ class VqeRunner:
                 converge_vals[i] = np.asarray(values)
                 optimizer_names.append(type(optimizer).__name__)
 
-            VqeRunner.plot_convergences(converge_cnts, converge_vals, optimizer_names, file_name=f"{name}")
-
+            self.plot_convergences(converge_cnts, converge_vals, optimizer_names, file_name=f"{name}")
 
 
 class UnvalidOptimizerError(RuntimeError):
