@@ -15,4 +15,8 @@ if __name__=="__main__":
 
     vqe_runner = VqeRunner(m, n, J1, J2, h=0, simulation=True, seed=seed, ansatz=ansatz)
     result = vqe_runner.run_vqe(monitor=True)
+
     print(result)
+
+    exact_result = Model.get_exact_energy(vqe_runner.hamiltonian_matrix)
+    print(f"exact_result: {exact_result}")

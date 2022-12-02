@@ -116,7 +116,7 @@ class VqeRunner:
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
         plt.legend(loc='upper right')
-        plt.show()
+        plt.savefig("convergence_graph.png")
 
     def compare_optimizers(self):
         """
