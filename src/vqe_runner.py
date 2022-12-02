@@ -7,7 +7,7 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
 
-from src.ansatze.sample_ansatz import SampleAnsatz
+from src.ansatze.two_local_ansatz import TwoLocalAnsatz
 from src.model import Model
 
 
@@ -68,7 +68,7 @@ class VqeRunner:
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz:TwoLocal = SampleAnsatz.get_ansatz(self.N)
+        ansatz:TwoLocal = TwoLocalAnsatz.get_ansatz(self.N)
         print(ansatz)
 
 
