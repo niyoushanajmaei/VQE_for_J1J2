@@ -1,5 +1,5 @@
 from qiskit import Aer
-from qiskit.opflow import X, Z, I
+
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
@@ -10,7 +10,7 @@ from src.model import Model
 
 
 class VqeRunner:
-    def __init__(self, lattice_size, simulation = True, seed=50, ansatz="sample_ansatz"):
+    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sample_ansatz"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -20,14 +20,15 @@ class VqeRunner:
         uncertainty on a quantum computation when finding a minimum. If you are executing a variational algorithm using
         a Quantum ASseMbly Language (QASM) simulator or a real device, SPSA would be the most recommended choice among
         the optimizers provided here.
-
-        lattice_size is a 2 element vector defining the number of rows and columns in the 2D spin lattice
         """
         self.seed = seed
         self.ansatz = ansatz
-        self.hamiltonian = Model.get_hamiltonian(lattice_size)
         self.lattice_size = lattice_size
-        self.N = lattice_size[0]*lattice_size[1]
+        self.m = m
+        self.n = n
+        self.N = m*n
+        self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
+        self.hamiltonian_matrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
         else:
@@ -63,9 +64,9 @@ class VqeRunner:
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
-        # ansatz:QuantumCircuit = SampleAnsatz()
         ansatz:TwoLocal = SampleAnsatz.get_ansatz(self.N)
         print(ansatz)
+        
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
@@ -77,6 +78,7 @@ class VqeRunner:
         result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
         optimal_value1 = result.optimal_value
         return result
+
 
 
 class UnvalidOptimizerError(RuntimeError):

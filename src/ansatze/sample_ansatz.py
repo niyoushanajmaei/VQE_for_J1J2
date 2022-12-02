@@ -1,10 +1,15 @@
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import TwoLocal
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7986d225620277360099d9822dd94b7cd42e2c5f
 
 class SampleAnsatz(QuantumCircuit):
     def __init__(self):
         pass
 
+<<<<<<< HEAD
     # move this to another class that generates required ansaetze?
     @staticmethod
     def getTwoLocalAnsatz(N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=2):
@@ -24,3 +29,8 @@ class SampleAnsatz(QuantumCircuit):
             N: size of system. for a mxn lattice, N = m*n
         """
         return SampleAnsatz.getTwoLocalAnsatz(N)
+=======
+    @staticmethod
+    def get_ansatz() -> TwoLocal:
+        pass
+>>>>>>> 7986d225620277360099d9822dd94b7cd42e2c5f
