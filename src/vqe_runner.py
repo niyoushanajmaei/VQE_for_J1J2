@@ -23,6 +23,9 @@ class VqeRunner:
         """
         self.seed = seed
         self.ansatz = ansatz
+        self.m = m
+        self.n = n
+        self.N = m*n
         self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
         self.hamiltonian_matrix = self.hamiltonian.to_matrix()
         if simulation:
@@ -60,7 +63,9 @@ class VqeRunner:
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
-        ansatz:TwoLocal = SampleAnsatz.get_ansatz()
+        ansatz:TwoLocal = SampleAnsatz.get_ansatz(self.N)
+        print(ansatz)
+
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
