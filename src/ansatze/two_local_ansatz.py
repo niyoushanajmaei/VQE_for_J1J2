@@ -24,4 +24,4 @@ class TwoLocalAnsatz(QuantumCircuit):
         """
             N: size of system. for a mxn lattice, N = m*n
         """
-        return SampleAnsatz.getTwoLocalAnsatz(N)
+        return TwoLocalAnsatz.getTwoLocalAnsatz(N)
