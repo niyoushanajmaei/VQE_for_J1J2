@@ -14,5 +14,5 @@ if __name__=="__main__":
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
     vqe_runner = VqeRunner(m, n, J1, J2, h=0, simulation=True, seed=seed, ansatz=ansatz)
-    results = vqe_runner.run_vqe()
-    print(results)
+    result = vqe_runner.run_vqe(monitor=False)
+    print(result)

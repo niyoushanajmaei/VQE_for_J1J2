@@ -1,15 +1,19 @@
-from qiskit import Aer
+import numpy as np
+import matplotlib.pyplot as plt
 
+from qiskit import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
-from qiskit.circuit import QuantumCircuit
+
 from src.ansatze.sample_ansatz import SampleAnsatz
 from src.model import Model
 
 
+
 class VqeRunner:
+
     def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sample_ansatz"):
         """
         For running on back-end "SPSA" is used as optimizer
@@ -30,7 +34,7 @@ class VqeRunner:
         else:
             self.optimizer = "SPSA"
 
-    def run_vqe(self) -> dict:
+    def run_vqe(self, monitor=True):
         """
         Runs the VQE algorithm
 
@@ -61,6 +65,7 @@ class VqeRunner:
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
         ansatz:TwoLocal = SampleAnsatz.get_ansatz()
+
         if self.optimizer == "SLSQP":
             slsqp = SLSQP(maxiter=1000)
         elif self.optimizer == "SPSA":
@@ -68,11 +73,51 @@ class VqeRunner:
             slsqp = SPSA(maxiter=100)
         else:
             raise UnvalidOptimizerError
-        vqe = VQE(ansatz, optimizer=slsqp, quantum_instance=qi, include_custom=True)
+
+        if monitor:
+            counts = []
+            values = []
+
+            def store_intermediate_results(eval_count, parameters, mean, std):
+                counts.append(eval_count)
+                values.append(mean)
+
+            vqe = VQE(ansatz, optimizer=slsqp, callback=store_intermediate_results, quantum_instance=qi,include_custom=True)
+        else:
+            vqe = VQE(ansatz, optimizer=slsqp, quantum_instance=qi, include_custom=True)
+
         result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
-        optimal_value1 = result.optimal_value
+
+        if monitor:
+            counts = [np.asarray(counts)]
+            values =  [np.asarray(values)]
+            optimizers = [self.optimizer]
+            VqeRunner.plot_convergence(counts, values, optimizers)
         return result
 
+    @staticmethod
+    def plot_convergences(self, counts: list, values: list, optimizers: list):
+        """
+        plots the convergence plots for a list of counts and values
+
+        :param: counts and values should be a list of np arrays
+            optimizers is a list of the name of the optimizers corresponding to each set of counts and values
+        """
+        plt.figure(figsize=(12, 8))
+        for i, optimizer in enumerate(optimizers):
+            plt.plot(counts[i], values[i], label=optimizer)
+        plt.xlabel('Eval count')
+        plt.ylabel('Energy')
+        plt.title('Energy convergence plot')
+        plt.legend(loc='upper right')
+        plt.show()
+
+    def compare_optimizers(self):
+        """
+
+        :return:
+        """
+        pass
 
 
 class UnvalidOptimizerError(RuntimeError):
