@@ -17,17 +17,17 @@ class Model:
     @staticmethod
     def getHamiltonian_J1J2_2D(m, n, J1, J2, h=0):
         """
-                    m x n lattice of spins
-                    J1: nearest neighbour interaction
-                    J2: next to nearest neighbour interaction
-                    h: magnetic field, taken to be 0 for now
+            m x n lattice of spins
+            J1: nearest neighbour interaction
+            J2: next to nearest neighbour interaction
+            h: magnetic field, taken to be 0 for now
 
-                    H = - J1 ΣSi.Sj - J2 ΣSi.Sj - h ΣSi
+            H = - J1 ΣSi.Sj - J2 ΣSi.Sj - h ΣSi
 
-                    corner cases: 1D, 2x2 don't work
-                    1D takes neighbours that don't exist
-                    and 2D has multiple repetitions of same bonds
-                """
+            corner cases: 1D, 2x2 don't work
+            1D takes neighbours that don't exist
+            and 2D has multiple repetitions of same bonds
+        """
 
         if m < 1 or n < 1 or (m == 1 and n == 1):
             raise InvalidSizeError

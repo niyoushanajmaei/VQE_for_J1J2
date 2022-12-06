@@ -132,7 +132,9 @@ class VqeRunner:
 
         seed = self.seed
         algorithm_globals.random_seed = seed
-        qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
+        backend = Aer.get_backend('aer_simulator')
+        backend._configuration.max_shots = 1
+        qi = QuantumInstance(backend, seed_transpiler=seed, seed_simulator=seed)
 
         for name, ansatz in ansatze.items():
             converge_cnts = np.empty([len(optimizers)], dtype=object)
