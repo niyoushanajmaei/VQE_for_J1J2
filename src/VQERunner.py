@@ -7,14 +7,14 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
 
-from src.ansatze.two_local_ansatz import TwoLocalAnsatz
+from src.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 from src.model import Model
 
 
 
-class VqeRunner:
+class VQERunner:
 
-    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sample_ansatz"):
+    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sampleAnsatz"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -31,13 +31,13 @@ class VqeRunner:
         self.n = n
         self.N = m*n
         self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
-        self.hamiltonian_matrix = self.hamiltonian.to_matrix()
+        self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
         else:
             self.optimizer = "SPSA"
 
-    def run_vqe(self, monitor=True):
+    def runVqe(self, monitor=True):
         """
         Runs the VQE algorithm
 
@@ -68,7 +68,7 @@ class VqeRunner:
         qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz:TwoLocal = TwoLocalAnsatz.get_ansatz(self.N)
+        ansatz:TwoLocal = TwoLocalAnsatz.getAnsatz(self.N)
         print(ansatz)
 
 
@@ -84,11 +84,11 @@ class VqeRunner:
             counts = []
             values = []
 
-            def store_intermediate_results(eval_count, parameters, mean, std):
-                counts.append(eval_count)
+            def store_Intermediate_Results(evalCount, parameters, mean, std):
+                counts.append(evalCount)
                 values.append(mean)
 
-            vqe = VQE(ansatz, optimizer=slsqp, callback=store_intermediate_results, quantum_instance=qi,include_custom=True)
+            vqe = VQE(ansatz, optimizer=slsqp, callback=store_Intermediate_Results, quantum_instance=qi,include_custom=True)
         else:
             vqe = VQE(ansatz, optimizer=slsqp, quantum_instance=qi, include_custom=True)
 
@@ -98,10 +98,10 @@ class VqeRunner:
             counts = [np.asarray(counts)]
             values = [np.asarray(values)]
             optimizers = [self.optimizer]
-            self.plot_convergences(counts, values, optimizers)
+            self.plotConvergences(counts, values, optimizers)
         return result
 
-    def plot_convergences(self, counts, values, optimizers, file_name="convergence_graph.png"):
+    def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
         """
         plots the convergence plots for a list of counts and values
 
@@ -113,21 +113,21 @@ class VqeRunner:
             plt.plot(counts[i], values[i], label=optimizer)
 
         # plotting exact value
-        plt.axhline(y=Model.get_exact_energy(self.hamiltonian_matrix), color='r', linestyle='-', label="exact energy")
+        plt.axhline(y=Model.getExactEnergy(self.hamiltonianMatrix), color='r', linestyle='-', label="exact energy")
 
         plt.xlabel('Eval count')
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
         plt.legend(loc='upper right')
-        plt.savefig(f"graphs/{file_name}")
+        plt.savefig(f"graphs/{fileName}")
 
-    def compare_optimizers_and_ansatze(self):
+    def compare_Optimizers_And_Ansatze(self):
         """
         Runs the VQE algorithm with a list of optimizers and plots the convergence graphs
 
         """
 
-        ansatze = {"two_local": TwoLocalAnsatz.get_ansatz(self.N)}
+        ansatze = {"TwoLocal": TwoLocalAnsatz.getAnsatz(self.N)}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
 
         seed = self.seed
@@ -136,25 +136,25 @@ class VqeRunner:
         qi = QuantumInstance(backend, seed_transpiler=seed, seed_simulator=seed)
 
         for name, ansatz in ansatze.items():
-            converge_cnts = np.empty([len(optimizers)], dtype=object)
-            converge_vals = np.empty([len(optimizers)], dtype=object)
-            optimizer_names = []
+            convergeCnts = np.empty([len(optimizers)], dtype=object)
+            convergeVals = np.empty([len(optimizers)], dtype=object)
+            optimizerNames = []
             for i, optimizer in enumerate(optimizers):
                 counts = []
                 values = []
 
-                def store_intermediate_results(eval_count, parameters, mean, std):
-                    counts.append(eval_count)
+                def store_Intermediate_Results(evalCount, parameters, mean, std):
+                    counts.append(evalCount)
                     values.append(mean)
 
-                vqe = VQE(ansatz, optimizer, callback=store_intermediate_results, quantum_instance=qi, include_custom=True)
+                vqe = VQE(ansatz, optimizer, callback=store_Intermediate_Results, quantum_instance=qi, include_custom=True)
                 result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
 
-                converge_cnts[i] = np.asarray(counts)
-                converge_vals[i] = np.asarray(values)
-                optimizer_names.append(type(optimizer).__name__)
+                convergeCnts[i] = np.asarray(counts)
+                convergeVals[i] = np.asarray(values)
+                optimizerNames.append(type(optimizer).__name__)
 
-            self.plot_convergences(converge_cnts, converge_vals, optimizer_names, file_name=f"{name}")
+            self.plotConvergences(convergeCnts, convergeVals, optimizerNames, fileName=f"{name}")
 
 
 class UnvalidOptimizerError(RuntimeError):

@@ -42,11 +42,11 @@ class Model:
             for i in range(m):
                 for j in range(n):
                     indexCurr = Model.getIndex(i, j, m, n)
-                    index_East = Model.getIndex(i, (j + 1) % n, m, n)
+                    indexEast = Model.getIndex(i, (j + 1) % n, m, n)
                     total = 0
                     for ind in range(0, N):
                         if (ind == indexCurr
-                                or ind == index_East):
+                                or ind == indexEast):
                             curr = pauli
                         else:
                             # curr = np.identity((2,2))
@@ -61,10 +61,10 @@ class Model:
                         H1 = total
                     else:
                         H1 += total
-                    index_South = Model.getIndex((i + 1) % m, j, m, n)
+                    indexSouth = Model.getIndex((i + 1) % m, j, m, n)
                     total = 0
                     for ind in range(0, N):
-                        if ind == indexCurr or ind == index_South:
+                        if ind == indexCurr or ind == indexSouth:
                             curr = pauli
                         else:
                             curr = I
@@ -81,10 +81,10 @@ class Model:
             for i in range(m):
                 for j in range(n):
                     indexCurr = Model.getIndex(i, j, m, n)
-                    index_NorthEast = Model.getIndex((i - 1) % m, (j + 1) % n, m, n)
+                    indexNorthEast = Model.getIndex((i - 1) % m, (j + 1) % n, m, n)
                     total = 0
                     for ind in range(0, N):
-                        if ind == indexCurr or ind == index_NorthEast:
+                        if ind == indexCurr or ind == indexNorthEast:
                             curr = pauli
                         else:
                             # curr = np.identity((2,2))
@@ -99,10 +99,10 @@ class Model:
                         H2 = total
                     else:
                         H2 += total
-                    index_SouthEast = Model.getIndex((i + 1) % m, (j + 1) % n, m, n)
+                    indexSouthEast = Model.getIndex((i + 1) % m, (j + 1) % n, m, n)
                     total = 0
                     for ind in range(0, N):
-                        if ind == indexCurr or ind == index_SouthEast:
+                        if ind == indexCurr or ind == indexSouthEast:
                             curr = pauli
                         else:
                             curr = I
@@ -117,9 +117,9 @@ class Model:
 
 
     @staticmethod
-    def get_exact_energy(hamiltonian_matrix):
+    def getExactEnergy(hamiltonianMatrix):
         # TODO: approximate the eigenvalue for larger systems
-        exactEnergy = np.min(np.linalg.eigvals(hamiltonian_matrix))
+        exactEnergy = np.min(np.linalg.eigvals(hamiltonianMatrix))
         return exactEnergy
 
 
