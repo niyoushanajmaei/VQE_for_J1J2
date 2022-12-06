@@ -133,7 +133,7 @@ class VqeRunner:
         seed = self.seed
         algorithm_globals.random_seed = seed
         backend = Aer.get_backend('aer_simulator')
-        backend._configuration.max_shots = 1
+        #backend._configuration.max_shots = 1
         qi = QuantumInstance(backend, seed_transpiler=seed, seed_simulator=seed)
 
         for name, ansatz in ansatze.items():

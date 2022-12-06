@@ -1,5 +1,23 @@
+from qiskit import Aer, QuantumCircuit
+
 from src.vqe_runner import VqeRunner
 from src.model import Model
+
+def test_backend():
+    # Create circuit
+    circ = QuantumCircuit(2)
+    circ.h(0)
+    circ.cx(0, 1)
+    circ.measure_all()
+
+    backend = Aer.get_backend('aer_simulator')
+    backend._configuration.max_shots = 1
+    shots = 10000
+
+    job = backend.run(circ, shots=shots)
+    counts = job.result().get_counts(0)
+    print(counts)
+
 
 if __name__=="__main__":
     seed = 50
@@ -22,3 +40,5 @@ if __name__=="__main__":
 
     exact_result = Model.get_exact_energy(vqe_runner.hamiltonian_matrix)
     print(f"exact_result: {exact_result}")
+
+    test_backend()
