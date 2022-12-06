@@ -37,7 +37,7 @@ class VQERunner:
         else:
             self.optimizer = "SPSA"
 
-    def runVqe(self, monitor=True):
+    def runVQE(self, monitor=True):
         """
         Runs the VQE algorithm
 
@@ -127,7 +127,7 @@ class VQERunner:
 
         """
 
-        ansatze = {"TwoLocal": TwoLocalAnsatz.getAnsatz(self.N)}
+        ansatze = {"twoLocal": TwoLocalAnsatz.getAnsatz(self.N)}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
 
         seed = self.seed
