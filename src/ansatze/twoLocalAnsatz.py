@@ -20,7 +20,7 @@ class TwoLocalAnsatz(QuantumCircuit):
         return twoLocalAnsatz
 
     @staticmethod
-    def get_ansatz(N):
+    def getAnsatz(N):
         """
             N: size of system. for a mxn lattice, N = m*n
         """

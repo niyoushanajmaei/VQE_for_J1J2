@@ -1,7 +1,7 @@
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import TwoLocal
 
-class Ansatz(QuantumCircuit):
+class FuelnerHartmannAnsatz(QuantumCircuit):
     def __init__(self):
         pass
 
