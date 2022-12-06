@@ -1,7 +1,7 @@
 from qiskit import Aer, QuantumCircuit
-
 from src.vqe_runner import VqeRunner
 from src.model import Model
+
 
 def test_backend():
     # Create circuit
@@ -41,4 +41,4 @@ if __name__=="__main__":
     exact_result = Model.get_exact_energy(vqe_runner.hamiltonian_matrix)
     print(f"exact_result: {exact_result}")
 
-    test_backend()
+    #test_backend()
