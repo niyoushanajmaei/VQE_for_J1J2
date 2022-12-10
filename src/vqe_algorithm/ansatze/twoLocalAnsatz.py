@@ -2,8 +2,9 @@ from qiskit.circuit.library import TwoLocal
 from src.vqe_algorithm.ansatz import Ansatz
 
 class TwoLocalAnsatz(Ansatz):
-    def __init__(self):
-        self.circuit = self._get_ansatz()
+    def __init__(self, N):
+        super().__init__(N)
+        self.circuit = self._get_ansatz_w(N)
 
     def _getTwoLocalAnsatz(self, N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=2):
         """
@@ -17,11 +18,11 @@ class TwoLocalAnsatz(Ansatz):
         twoLocalAnsatz = TwoLocal(N, *rotation_blocks, *entanglement_blocks, entanglement, reps, insert_barriers=True)
         return twoLocalAnsatz
 
-    def _getAnsatz(self, N):
+    def _get_ansatz_w(self, N):
         """
             N: size of system. for a mxn lattice, N = m*n
         """
-        return TwoLocalAnsatz.getTwoLocalAnsatz(N)
+        return TwoLocalAnsatz._getTwoLocalAnsatz(N)
 
     def get_parameters(self) -> list:
         """

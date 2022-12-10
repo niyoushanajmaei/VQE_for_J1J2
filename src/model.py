@@ -4,7 +4,7 @@ import numpy as np
 class Model:
 
     @staticmethod
-    def getIndex(i, j,m ,n):
+    def getIndex(i, j, m, n):
         """
             mapping for spins: i,j (0<=i
                 maps to (i*n+j)

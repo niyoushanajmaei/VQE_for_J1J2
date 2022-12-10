@@ -92,7 +92,7 @@ class VQERunner:
             slsqp = SPSA(maxiter=iter)
             print(f"Using SPSA optimizer with {iter} iterations")
         else:
-            raise UnvalidOptimizerError
+            raise InvalidOptimizerError
 
         if monitor:
             counts = []
@@ -193,9 +193,9 @@ class VQERunner:
         return backend
 
 
-class UnvalidOptimizerError(RuntimeError):
+class InvalidOptimizerError(RuntimeError):
     """
-    Raised when an unvalid optimizer value is used
+    Raised when an Invalid optimizer value is used
     """
     pass
 
