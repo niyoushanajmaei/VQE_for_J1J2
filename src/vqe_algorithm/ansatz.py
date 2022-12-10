@@ -1,9 +1,9 @@
 
 class Ansatz:
-    def __init__(self):
-        self.circuit = self._get_ansatz()
+    def __init__(self, N):
+        self.circuit = None
 
-    def _get_ansatz(self):
+    def _get_ansatz_w(self, N):
         """
         should return the ansatz circuit
         """

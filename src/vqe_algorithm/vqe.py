@@ -27,9 +27,9 @@ class VQE:
         self.N = m * n
 
         if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz()
+            self.ansatz = FuelnerHartmannAnsatz(self.N)
         elif ansatz == "TwoLocal":
-            self.ansatz = TwoLocalAnsatz()
+            self.ansatz = TwoLocalAnsatz(self.N)
         else:
             raise UnidentifiedAnsatzError
 
@@ -44,18 +44,18 @@ class VQE:
 
         self.simulation = simulation
 
-    def run_vqe(self, iter):
+    def run_vqe(self, iterations: int):
         """
         wrapper class for running the vqe algorithm
 
-        :param iter: number of iterations of the algorithm
+        :param iterations: number of iterations of the algorithm
 
         :return:
         """
         seed = 500
         qi = QuantumInstance(self.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
-        for i in range(iter):
+        for i in range(iterations):
             hamiltonian_expectation = self.hamiltonian_expectator.get_hamiltonian_expectation(qi, self.ansatz)
             new_parameters = self.optimizer.optimize(self.ansatz.get_parameters(), hamiltonian_expectation)
             self.ansatz.update_parameters(new_parameters)
