@@ -1,28 +1,46 @@
-from qiskit import Aer, QuantumCircuit
 from src.VQERunner import VQERunner
 from src.model import Model
+from src.vqe_algorithm.vqe import VQE
 
 
-if __name__=="__main__":
+def test_with_qiskit():
     seed = 50
     ansatz = "sample_ansatz"
     model = "j1j2"
 
-    m = 3
-    n = 3
+    m = 2
+    n = 2
     J1 = 1
     J2 = 0.5
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqeRunner = VQERunner(m, n, J1, J2, h=0, simulation=True, seed=seed, ansatz=ansatz)
-    #result = vqe_runner.run_vqe(monitor=True)
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, simulation=False, seed=seed, ansatz=ansatz)
+    result = vqe_runner.run_vqe(monitor=True)
 
-    #print(result)
+    print(result)
 
-    vqeRunner.compare_Optimizers_And_Ansatze()
+    # vqe_runner.compare_optimizers_and_ansatze()
 
-    exactResult = Model.getExactEnergy(vqeRunner.hamiltonianMatrix)
+    exactResult = Model.getExactEnergy(VQERunner.hamiltonianMatrix)
     print(f"exactResult: {exactResult}")
 
-    #test_backend()
+
+def test_with_vqe_algorithm ():
+    m = 2
+    n = 2
+    J1 = 1
+    J2 = 0.5
+
+    vqe = VQE(m, n, J1, J2, h=0, simulation=True, ansatz="FuelnerHartmann", open_bound=True)
+    result = vqe.run_vqe()
+
+    print(result)
+
+    exactResult = Model.getExactEnergy(vqe.hamiltonianMatrix)
+    print(f"exactResult: {exactResult}")
+
+
+if __name__=="__main__":
+    test_with_vqe_algorithm()
+

@@ -1,4 +1,3 @@
-import qiskit.opflow
 from qiskit.opflow import X, Y, Z, I
 import numpy as np
 
@@ -15,7 +14,7 @@ class Model:
 
 
     @staticmethod
-    def getHamiltonian_J1J2_2D(m, n, J1, J2, h=0):
+    def getHamiltonian_J1J2_2D_periodic(m, n, J1, J2, h=0):
         """
             m x n lattice of spins
             J1: nearest neighbour interaction
@@ -114,6 +113,11 @@ class Model:
                     H2 += total
 
         return H1 * J1 + J2 * H2
+
+    @staticmethod
+    def getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=0):
+        #TODO
+        pass
 
 
     @staticmethod

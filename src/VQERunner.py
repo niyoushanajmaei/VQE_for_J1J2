@@ -7,8 +7,12 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
 
-from src.ansatze.twoLocalAnsatz import TwoLocalAnsatz
+from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
+from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 from src.model import Model
+
+from qiskit import IBMQ
+from qiskit.providers.ibmq import least_busy
 
 
 
@@ -26,16 +30,22 @@ class VQERunner:
         the optimizers provided here.
         """
         self.seed = seed
-        self.ansatz = ansatz
+        if ansatz == "FeulnerHartmann":
+            self.ansatz = FuelnerHartmannAnsatz()
+        elif ansatz == "TwoLocal":
+            self.ansatz = TwoLocalAnsatz()
+        else:
+            raise UnidentifiedAnsatzError
         self.m = m
         self.n = n
         self.N = m*n
-        self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
+        self.hamiltonian = Model.getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=h)
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
         else:
             self.optimizer = "SPSA"
+        self.simulation = simulation
 
     def runVQE(self, monitor=True):
         """
@@ -65,18 +75,22 @@ class VQERunner:
 
         seed = self.seed
         algorithm_globals.random_seed = seed
-        qi = QuantumInstance(Aer.get_backend('aer_simulator'), seed_transpiler=seed, seed_simulator=seed)
+        qi = QuantumInstance(self.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz:TwoLocal = TwoLocalAnsatz.getAnsatz(self.N)
+        ansatz = self.ansatz._getAnsatz()
         print(ansatz)
 
 
         if self.optimizer == "SLSQP":
-            slsqp = SLSQP(maxiter=1000)
+            iter = 1000
+            slsqp = SLSQP(maxiter=iter)
+            print(f"Using SLSQP optimizer with {iter} iterations")
         elif self.optimizer == "SPSA":
             # TODO for SPSA, investigate the usage of a user defined gradient
-            slsqp = SPSA(maxiter=500)
+            iter = 10
+            slsqp = SPSA(maxiter=iter)
+            print(f"Using SPSA optimizer with {iter} iterations")
         else:
             raise InvalidOptimizerError
 
@@ -87,6 +101,7 @@ class VQERunner:
             def store_Intermediate_Results(evalCount, parameters, mean, std):
                 counts.append(evalCount)
                 values.append(mean)
+                print(f"Current Estimated Energy: {mean}")
 
             vqe = VQE(ansatz, optimizer=slsqp, callback=store_Intermediate_Results, quantum_instance=qi,include_custom=True)
         else:
@@ -127,12 +142,13 @@ class VQERunner:
 
         """
 
-        ansatze = {"twoLocal": TwoLocalAnsatz.getAnsatz(self.N)}
+        ansatze = {"twoLocal": TwoLocalAnsatz._getAnsatz(self.N)}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
-        backend = Aer.get_backend('aer_simulator')
+        backend = self.get_backend(simulate=self.simulation)
+        print(f"Using {backend.name()}")
         qi = QuantumInstance(backend, seed_transpiler=seed, seed_simulator=seed)
 
         for name, ansatz in ansatze.items():
@@ -157,8 +173,34 @@ class VQERunner:
             self.plotConvergences(convergeCnts, convergeVals, optimizerNames, fileName=f"{name}")
 
 
-class UnvalidOptimizerError(RuntimeError):
+    def get_backend(self, simulate: bool = True):
+        """
+        returns an Aer simulator if simulate = True
+        and an IBMQ backend if simulate = False
+
+        In case simulate is False, it is assumed that the user has stored their IBM Quantum account
+        information locally ahead of time using IBMQ.save_account(TOKEN).
+        TOKEN here is the API token you obtain from your IBM Quantum account.
+        """
+        if simulate:
+            backend = Aer.get_backend('aer_simulator')
+        else:
+            IBMQ.load_account()  # Load account from disk
+            provider = IBMQ.get_provider(hub='ibm-q')
+            filtered_backends = provider.backends(filters=lambda x: not x.configuration().simulator
+                                                                    and x.status().operational)
+            backend = least_busy(filtered_backends)
+        return backend
+
+
+class InvalidOptimizerError(RuntimeError):
     """
     Raised when an Invalid optimizer value is used
+    """
+    pass
+
+class UnidentifiedAnsatzError(RuntimeError):
+    """
+    Raised when the given ansatz name is unidentified
     """
     pass
