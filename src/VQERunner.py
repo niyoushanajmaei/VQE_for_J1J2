@@ -78,7 +78,7 @@ class VQERunner:
             # TODO for SPSA, investigate the usage of a user defined gradient
             slsqp = SPSA(maxiter=500)
         else:
-            raise UnvalidOptimizerError
+            raise InvalidOptimizerError
 
         if monitor:
             counts = []
@@ -159,6 +159,6 @@ class VQERunner:
 
 class UnvalidOptimizerError(RuntimeError):
     """
-    Raised when an unvalid optimizer value is used
+    Raised when an Invalid optimizer value is used
     """
     pass
