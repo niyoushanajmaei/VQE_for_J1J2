@@ -1,4 +1,3 @@
-from qiskit import Aer, QuantumCircuit
 from src.VQERunner import VQERunner
 from src.model import Model
 
@@ -15,13 +14,13 @@ if __name__=="__main__":
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqe_runner = VqeRunner(m, n, J1, J2, h=0, simulation=False, seed=seed, ansatz=ansatz)
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, simulation=False, seed=seed, ansatz=ansatz)
     result = vqe_runner.run_vqe(monitor=True)
 
-    #print(result)
+    print(result)
 
     #vqe_runner.compare_optimizers_and_ansatze()
 
-    exactResult = Model.getExactEnergy(vqeRunner.hamiltonianMatrix)
+    exactResult = Model.getExactEnergy(VQERunner.hamiltonianMatrix)
     print(f"exactResult: {exactResult}")
 

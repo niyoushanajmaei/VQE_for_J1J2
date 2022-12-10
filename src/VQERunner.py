@@ -7,7 +7,7 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
 
-from src.ansatze.twoLocalAnsatz import TwoLocalAnsatz
+from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 from src.model import Model
 
 from qiskit import IBMQ
