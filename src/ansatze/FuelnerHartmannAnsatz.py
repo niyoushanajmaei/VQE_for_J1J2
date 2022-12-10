@@ -4,17 +4,6 @@ class FuelnerHartmannAnsatz(QuantumCircuit):
     def __init__(self):
         pass
 
-    # @staticmethod
-    # def XXYYZZBlock(theta_i):
-    #     """
-    #         Return a circuit with RXX RYY and RZZ gates
-    #         applied to two qubits, each with same angle theta_i
-    #     """
-    #     tempQc = QuantumCircuit(2)
-    #     tempQc.append(RXXGate(theta_i), [0,1])
-    #     tempQc.append(RYYGate(theta_i), [0,1])
-    #     tempQc.append(RZZGate(theta_i), [0,1])
-
     @staticmethod
     def getAnsatz(N, nLayers = 7):
         """
