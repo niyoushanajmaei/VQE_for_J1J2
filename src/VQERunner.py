@@ -7,6 +7,7 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA
 from qiskit.circuit.library import TwoLocal
 
+from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
 from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 from src.model import Model
 
@@ -29,11 +30,16 @@ class VQERunner:
         the optimizers provided here.
         """
         self.seed = seed
-        self.ansatz = ansatz
+        if ansatz == "FeulnerHartmann":
+            self.ansatz = FuelnerHartmannAnsatz()
+        elif ansatz == "TwoLocal":
+            self.ansatz = TwoLocalAnsatz()
+        else:
+            raise UnidentifiedAnsatzError
         self.m = m
         self.n = n
         self.N = m*n
-        self.hamiltonian = Model.getHamiltonian_J1J2_2D(m, n, J1, J2, h=h)
+        self.hamiltonian = Model.getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=h)
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
@@ -72,7 +78,7 @@ class VQERunner:
         qi = QuantumInstance(self.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz:TwoLocal = TwoLocalAnsatz.getAnsatz(self.N)
+        ansatz = self.ansatz._getAnsatz()
         print(ansatz)
 
 
@@ -136,7 +142,7 @@ class VQERunner:
 
         """
 
-        ansatze = {"twoLocal": TwoLocalAnsatz.getAnsatz(self.N)}
+        ansatze = {"twoLocal": TwoLocalAnsatz._getAnsatz(self.N)}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
 
         seed = self.seed
@@ -190,5 +196,11 @@ class VQERunner:
 class UnvalidOptimizerError(RuntimeError):
     """
     Raised when an unvalid optimizer value is used
+    """
+    pass
+
+class UnidentifiedAnsatzError(RuntimeError):
+    """
+    Raised when the given ansatz name is unidentified
     """
     pass

@@ -1,6 +1,5 @@
-from src.vqe_algorithm.optimizer import Optimizer
 
-class CustomOptimizer(Optimizer):
+class Optimizer:
     def __init__(self):
         pass
 
@@ -8,5 +7,4 @@ class CustomOptimizer(Optimizer):
         """
         Should return the new parameters
         """
-        #TODO
         pass
