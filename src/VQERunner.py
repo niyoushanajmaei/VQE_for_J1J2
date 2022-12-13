@@ -78,13 +78,12 @@ class VQERunner:
         qi = QuantumInstance(self.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz = self.ansatz._get_ansatz_w()
+        ansatz = self.ansatz.circuit
         print(ansatz)
 
 
         if self.optimizer == "SLSQP":
             iter = 1000
-            slsqp = SLSQP(maxiter=iter)
             print(f"Using SLSQP optimizer with {iter} iterations")
         elif self.optimizer == "SPSA":
             # TODO for SPSA, investigate the usage of a user defined gradient

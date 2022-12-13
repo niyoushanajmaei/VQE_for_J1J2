@@ -22,7 +22,7 @@ class TwoLocalAnsatz(Ansatz):
         """
             N: size of system. for a mxn lattice, N = m*n
         """
-        return TwoLocalAnsatz._getTwoLocalAnsatz(N)
+        return self._getTwoLocalAnsatz(N)
 
     def get_parameters(self) -> list:
         """
