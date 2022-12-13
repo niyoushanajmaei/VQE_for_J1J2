@@ -18,7 +18,7 @@ from qiskit.providers.ibmq import least_busy
 
 class VQERunner:
 
-    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="FeulnerHartmann"):
+    def __init__(self, m, n, J1, J2, h=0, periodic_hamiltonian = False, simulation = True, seed=50, ansatz="FeulnerHartmann"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -39,7 +39,10 @@ class VQERunner:
         self.m = m
         self.n = n
         self.N = m*n
-        self.hamiltonian = Model.getHamiltonian_J1J2_2D_periodic(m, n, J1, J2, h=h)
+        if periodic_hamiltonian:
+            self.hamiltonian = Model.getHamiltonian_J1J2_2D_periodic(m, n, J1, J2, h=h)
+        else:
+            self.hamiltonian = Model.getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=h)
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"

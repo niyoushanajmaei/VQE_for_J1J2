@@ -1,12 +1,15 @@
+import time
+
 from src.VQERunner import VQERunner
 from src.model import Model
 from src.vqe_algorithm.vqe import VQE
 
 
 def test_with_qiskit():
+    start = time.time()
     seed = 50
-    ansatz = "TwoLocal"
-    # ansatz = "FeulnerHartmann"
+    #ansatz = "TwoLocal"
+    ansatz = "FeulnerHartmann"
 
     m = 3
     n = 3
@@ -15,9 +18,10 @@ def test_with_qiskit():
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqe_runner = VQERunner(m, n, J1, J2, h=0, simulation=True, seed=seed, ansatz=ansatz)
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
     result = vqe_runner.runVQE(monitor=True)
 
+    print(f"The algorithm took {time.time()-start:.2f}s")
     print(result)
 
     # vqe_runner.compare_optimizers_and_ansatze()
