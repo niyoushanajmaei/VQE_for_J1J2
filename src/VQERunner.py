@@ -78,7 +78,7 @@ class VQERunner:
         qi = QuantumInstance(self.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
 
-        ansatz = self.ansatz._getAnsatz()
+        ansatz = self.ansatz._get_ansatz_w()
         print(ansatz)
 
 
