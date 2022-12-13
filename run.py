@@ -5,7 +5,8 @@ from src.vqe_algorithm.vqe import VQE
 
 def test_with_qiskit():
     seed = 50
-    ansatz = "FeulnerHartmann"
+    ansatz = "TwoLocal"
+    # ansatz = "FeulnerHartmann"
 
     m = 3
     n = 3
