@@ -22,7 +22,7 @@ def test_with_qiskit():
 
     # vqe_runner.compare_optimizers_and_ansatze()
 
-    exactResult = Model.getExactEnergy(VQERunner.hamiltonianMatrix)
+    exactResult = Model.getExactEnergy(vqe_runner.hamiltonianMatrix)
     print(f"exactResult: {exactResult}")
 
 

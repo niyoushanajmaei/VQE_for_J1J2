@@ -39,7 +39,7 @@ class VQERunner:
         self.m = m
         self.n = n
         self.N = m*n
-        self.hamiltonian = Model.getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=h)
+        self.hamiltonian = Model.getHamiltonian_J1J2_2D_periodic(m, n, J1, J2, h=h)
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         if simulation:
             self.optimizer = "SLSQP"
@@ -84,11 +84,12 @@ class VQERunner:
 
         if self.optimizer == "SLSQP":
             iter = 1000
+            opt = SLSQP(maxiter=iter)
             print(f"Using SLSQP optimizer with {iter} iterations")
         elif self.optimizer == "SPSA":
             # TODO for SPSA, investigate the usage of a user defined gradient
             iter = 10
-            slsqp = SPSA(maxiter=iter)
+            opt = SPSA(maxiter=iter)
             print(f"Using SPSA optimizer with {iter} iterations")
         else:
             raise InvalidOptimizerError
@@ -102,9 +103,9 @@ class VQERunner:
                 values.append(mean)
                 print(f"Current Estimated Energy: {mean}")
 
-            vqe = VQE(ansatz, optimizer=slsqp, callback=store_Intermediate_Results, quantum_instance=qi,include_custom=True)
+            vqe = VQE(ansatz, optimizer=opt, callback=store_Intermediate_Results, quantum_instance=qi,include_custom=True)
         else:
-            vqe = VQE(ansatz, optimizer=slsqp, quantum_instance=qi, include_custom=True)
+            vqe = VQE(ansatz, optimizer=opt, quantum_instance=qi, include_custom=True)
 
         result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
 
