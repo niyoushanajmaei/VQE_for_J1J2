@@ -7,8 +7,8 @@ def test_with_qiskit():
     seed = 50
     ansatz = "FeulnerHartmann"
 
-    m = 2
-    n = 2
+    m = 3
+    n = 3
     J1 = 1
     J2 = 0.5
 

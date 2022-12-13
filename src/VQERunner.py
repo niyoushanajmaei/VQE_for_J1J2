@@ -31,9 +31,9 @@ class VQERunner:
         """
         self.seed = seed
         if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz()
+            self.ansatz = FuelnerHartmannAnsatz(m*n)
         elif ansatz == "TwoLocal":
-            self.ansatz = TwoLocalAnsatz()
+            self.ansatz = TwoLocalAnsatz(m*n)
         else:
             raise UnidentifiedAnsatzError
         self.m = m
