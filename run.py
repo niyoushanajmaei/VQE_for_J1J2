@@ -15,8 +15,8 @@ def test_with_qiskit():
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqe_runner = VQERunner(m, n, J1, J2, h=0, simulation=False, seed=seed, ansatz=ansatz)
-    result = vqe_runner.run_vqe(monitor=True)
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, simulation=True, seed=seed, ansatz=ansatz)
+    result = vqe_runner.runVQE(monitor=True)
 
     print(result)
 

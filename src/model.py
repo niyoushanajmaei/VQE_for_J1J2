@@ -134,9 +134,9 @@ class Model:
         for pauli in [X, Y, Z]:
             for i in range(m):
                 for j in range(n):
-                    indexCurr = getIndex(i, j, m, n)
+                    indexCurr = Model.getIndex(i, j, m, n)
                     if j < n-1: #not last column
-                        index_East = getIndex(i, j+1, m, n)
+                        index_East = Model.getIndex(i, j+1, m, n)
                         total = 0
                         for ind in range(0, N):
                             if (ind == indexCurr 
@@ -153,7 +153,7 @@ class Model:
                         else:
                             H1 += total
                     if i < m-1: #not last row
-                        index_South = getIndex(i+1, j, m, n)
+                        index_South = Model.getIndex(i+1, j, m, n)
                         total = 0
                         for ind in range(0, N):
                             if (ind == indexCurr or ind == index_South):
@@ -173,9 +173,9 @@ class Model:
         for pauli in [X, Y, Z]:
             for i in range(m):
                 for j in range(n):
-                    indexCurr = getIndex(i, j, m, n)
+                    indexCurr = Model.getIndex(i, j, m, n)
                     if (i > 0 and j < n-1):
-                        index_NorthEast = getIndex(i-1, j+1, m, n)
+                        index_NorthEast = Model.getIndex(i-1, j+1, m, n)
                         total = 0
                         for ind in range(0, N):
                             if (ind == indexCurr or ind == index_NorthEast):
@@ -191,7 +191,7 @@ class Model:
                         else:
                             H2 += total
                     if (i < m-1 and j < n-1):
-                        index_SouthEast = getIndex(i+1, j+1, m, n)
+                        index_SouthEast = Model.getIndex(i+1, j+1, m, n)
                         total = 0
                         for ind in range(0, N):
                             if (ind == indexCurr or ind == index_SouthEast):
