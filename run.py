@@ -5,8 +5,7 @@ from src.vqe_algorithm.vqe import VQE
 
 def test_with_qiskit():
     seed = 50
-    ansatz = "sample_ansatz"
-    model = "j1j2"
+    ansatz = "FeulnerHartmann"
 
     m = 2
     n = 2
@@ -42,5 +41,5 @@ def test_with_vqe_algorithm ():
 
 
 if __name__=="__main__":
-    test_with_vqe_algorithm()
+    test_with_qiskit()
 

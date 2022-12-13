@@ -18,7 +18,7 @@ from qiskit.providers.ibmq import least_busy
 
 class VQERunner:
 
-    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="sampleAnsatz"):
+    def __init__(self, m, n, J1, J2, h=0, simulation = True, seed=50, ansatz="FeulnerHartmann"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
