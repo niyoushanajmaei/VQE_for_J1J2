@@ -146,7 +146,7 @@ class VQERunner:
         """
         twolocal = TwoLocalAnsatz(self.N)
         fuelner = FuelnerHartmannAnsatz(self.N)
-        ansatze = {"twoLocal": twolocal.circuit,"feulnerHartmann": fuelner.circuit}
+        ansatze = {"twoLocal": twolocal.circuit}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=1000), ADAM(maxiter=1000, amsgrad=True)]
 
         seed = self.seed
@@ -160,6 +160,7 @@ class VQERunner:
             convergeVals = np.empty([len(optimizers)], dtype=object)
             optimizerNames = []
             for i, optimizer in enumerate(optimizers):
+                print(f"Running for {name} and {optimizer}")
                 counts = []
                 values = []
 
