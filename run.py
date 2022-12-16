@@ -65,6 +65,21 @@ def test_compare_ansatze():
     print(f"exactResult: {exactResult}")
 
 
+def tune_adam():
+    start = time.time()
+    seed = 50
+    # ansatz = "TwoLocal"
+    ansatz = "FeulnerHartmann"
+
+    m = 3
+    n = 3
+    J1 = 1
+    J2 = 0.5
+
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
+    vqe_runner.tune_lr_iter_for_optimizer()
+
+
 if __name__ == "__main__":
-    test_compare_ansatze()
+    tune_adam()
 
