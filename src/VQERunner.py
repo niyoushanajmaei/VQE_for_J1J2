@@ -190,13 +190,13 @@ class VQERunner:
 
         best_result = None
         best_lr = None
-        for lr in np.arange(0.0001, 0.7, 0.0001):
-            optimizer = ADAM(lr=lr)
+        for lr in np.arange(0.001, 0.7, 0.001):
+            optimizer = ADAM(lr=lr, maxiter=1000)
             print(f"Running for lr={lr}")
             vqe = VQE(ansatz, optimizer, quantum_instance=qi,
                           include_custom=True)
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
-            optimal_value = result["optimal_value"]
+            optimal_value = result.optimal_value
             print(f"optimal value for lr={lr} was {optimal_value}")
             if best_result is None or optimal_value < best_result:
                 best_result = optimal_value
