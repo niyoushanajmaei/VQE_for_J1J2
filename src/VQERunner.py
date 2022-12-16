@@ -18,7 +18,7 @@ from qiskit.providers.ibmq import least_busy
 
 class VQERunner:
 
-    def __init__(self, m, n, J1, J2, h=0, periodic_hamiltonian = False, simulation = True, seed=50, ansatz="FeulnerHartmann"):
+    def __init__(self, m, n, J1, J2, h=0, periodic_hamiltonian = False, simulation = True, seed=50, ansatz="FeulnerHartmann", optimizer="SLSQP"):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -44,10 +44,11 @@ class VQERunner:
         else:
             self.hamiltonian = Model.getHamiltonian_J1J2_2D_open(m, n, J1, J2, h=h)
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
-        if simulation:
-            self.optimizer = "SLSQP"
-        else:
-            self.optimizer = "SPSA"
+        self.optimizer = optimizer
+        # if simulation:
+        #     self.optimizer = "SLSQP"
+        # else:
+        #     self.optimizer = "SPSA"
         self.simulation = simulation
 
     def runVQE(self, monitor=True):
@@ -94,6 +95,10 @@ class VQERunner:
             iter = 10
             opt = SPSA(maxiter=iter)
             print(f"Using SPSA optimizer with {iter} iterations")
+        elif self.optimizer == "AMSGRAD":
+            iter = 50
+            lr = 0.5
+            opt = ADAM(maxiter=iter, lr=lr, amsgrad=True)
         else:
             raise InvalidOptimizerError
 
@@ -147,7 +152,7 @@ class VQERunner:
         twolocal = TwoLocalAnsatz(self.N)
         fuelner = FuelnerHartmannAnsatz(self.N)
         ansatze = {"twoLocal": twolocal.circuit}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=1000), ADAM(maxiter=1000, amsgrad=True)]
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=50, lr=0.6), ADAM(maxiter=50, lr=0.6, amsgrad=True)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -160,7 +165,7 @@ class VQERunner:
             convergeVals = np.empty([len(optimizers)], dtype=object)
             optimizerNames = []
             for i, optimizer in enumerate(optimizers):
-                print(f"Running for {name} and {optimizer}")
+                print(f"Running for {name} and {type(optimizer).__name__}")
                 counts = []
                 values = []
 

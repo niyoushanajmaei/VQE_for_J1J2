@@ -2,6 +2,8 @@ from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
 
+# TODO: Make the XXYYZZ circuit block a gate (https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.to_gate.html#qiskit.circuit.QuantumCircuit.to_gate)
+# or to instruction (https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.to_instruction.html#qiskit.circuit.QuantumCircuit.to_instruction)
 
 class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N):
