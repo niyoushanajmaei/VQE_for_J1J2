@@ -18,7 +18,7 @@ def test_with_qiskit():
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=True, simulation=True, seed=seed, ansatz=ansatz)
     result = vqe_runner.runVQE(monitor=True)
 
     print(f"The algorithm took {time.time()-start:.2f}s")
@@ -45,6 +45,26 @@ def test_with_vqe_algorithm ():
     print(f"exactResult: {exactResult}")
 
 
-if __name__=="__main__":
-    test_with_qiskit()
+def test_compare_ansatze():
+    start = time.time()
+    seed = 50
+    # ansatz = "TwoLocal"
+    ansatz = "FeulnerHartmann"
+
+    m = 3
+    n = 3
+    J1 = 1
+    J2 = 0.5
+
+    # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
+
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=True, simulation=True, seed=seed, ansatz=ansatz)
+    vqe_runner.compare_Optimizers_And_Ansatze()
+
+    exactResult = Model.getExactEnergy(vqe_runner.hamiltonianMatrix)
+    print(f"exactResult: {exactResult}")
+
+
+if __name__ == "__main__":
+    test_compare_ansatze()
 

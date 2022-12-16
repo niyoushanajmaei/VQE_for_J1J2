@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from qiskit import Aer, QuantumCircuit
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
-from qiskit.algorithms.optimizers import SLSQP, SPSA
+from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM
 from qiskit.circuit.library import TwoLocal
 
 from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
@@ -144,9 +144,10 @@ class VQERunner:
         Runs the VQE algorithm with a list of optimizers and plots the convergence graphs
 
         """
-
-        ansatze = {"twoLocal": TwoLocalAnsatz._getAnsatz(self.N)}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500)]
+        twolocal = TwoLocalAnsatz(self.N)
+        fuelner = FuelnerHartmannAnsatz(self.N)
+        ansatze = {"twoLocal": twolocal.circuit,"feulnerHartmann": fuelner.circuit}
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=1000), ADAM(maxiter=1000, amsgrad=True)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
