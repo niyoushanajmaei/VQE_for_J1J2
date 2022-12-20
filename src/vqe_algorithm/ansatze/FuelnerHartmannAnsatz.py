@@ -2,9 +2,6 @@ from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
 
-# TODO: Make the XXYYZZ circuit block a gate (https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.to_gate.html#qiskit.circuit.QuantumCircuit.to_gate)
-# or to instruction (https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.to_instruction.html#qiskit.circuit.QuantumCircuit.to_instruction)
-
 class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N):
         self.circuit = self._get_ansatz_w(N)
@@ -17,8 +14,17 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         return self._get_ansatz(N)
 
+    @staticmethod
+    def XXYYZZ(theta_i):
+        # make an instruction set/gate out of XXYYZZ to make it simpler to work with the XXYYZZ gates
+        qc = QuantumCircuit(2)
+        qc.rxx(theta_i, 0, 1)
+        qc.ryy(theta_i, 0, 1)
+        qc.rzz(theta_i, 0, 1)
+        XXYYZZ = qc.to_gate()
+        return qc.to_gate(label = 'XXYYZZ')
 
-    def _get_ansatz(self, N, nLayers = 7):
+    def _get_ansatz(self, N, nLayers = 3):
         """
            Ansatz described in https://arxiv.org/abs/2205.11198
 
@@ -65,12 +71,9 @@ class FuelnerHartmannAnsatz(Ansatz):
             qc.barrier()
             for gate in XXYYZZGatesList:
                 for qubits in gate:
-                    qc.rxx(theta[indParam], qubits[0], qubits[1])
-                    qc.ryy(theta[indParam], qubits[0], qubits[1])
-                    qc.rzz(theta[indParam], qubits[0], qubits[1])
+                    qc.append(FuelnerHartmannAnsatz.XXYYZZ(theta[indParam]), [qubits[0], qubits[1]])
                     indParam += 1
                 qc.barrier()
-
         # print(numParams - indParam)
         return qc
 
