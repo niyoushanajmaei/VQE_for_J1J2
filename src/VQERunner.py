@@ -152,7 +152,7 @@ class VQERunner:
         twolocal = TwoLocalAnsatz(self.N)
         fuelner = FuelnerHartmannAnsatz(self.N)
         ansatze = {"twoLocal": twolocal.circuit}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=50, lr=0.6), ADAM(maxiter=50, lr=0.6, amsgrad=True)]
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=50, lr=0.6), ADAM(maxiter=50, amsgrad=True, lr=0.6)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -181,6 +181,34 @@ class VQERunner:
                 optimizerNames.append(type(optimizer).__name__)
 
             self.plotConvergences(convergeCnts, convergeVals, optimizerNames, fileName=f"{name}")
+
+
+    def tune_lr_iter_for_optimizer(self):
+        twolocal = TwoLocalAnsatz(self.N)
+        fuelner = FuelnerHartmannAnsatz(self.N)
+        ansatz = twolocal.circuit
+
+        seed = self.seed
+        algorithm_globals.random_seed = seed
+        backend = self.get_backend(simulate=self.simulation)
+        print(f"Using {backend.name()}")
+        qi = QuantumInstance(backend, seed_transpiler=seed, seed_simulator=seed)
+
+        best_result = None
+        best_lr = None
+        for lr in np.arange(0.001, 0.7, 0.001):
+            optimizer = ADAM(lr=lr, maxiter=1000)
+            print(f"Running for lr={lr}")
+            vqe = VQE(ansatz, optimizer, quantum_instance=qi,
+                          include_custom=True)
+            result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
+            optimal_value = result.optimal_value
+            print(f"optimal value for lr={lr} was {optimal_value}")
+            if best_result is None or optimal_value < best_result:
+                best_result = optimal_value
+                best_lr = lr
+
+        print(f"Done. Overall best result was: {best_result} for lr={best_lr}")
 
 
     def get_backend(self, simulate: bool = True):

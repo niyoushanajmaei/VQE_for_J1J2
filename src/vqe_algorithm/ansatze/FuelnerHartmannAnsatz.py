@@ -2,6 +2,7 @@ from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
 
+
 class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N):
         self.circuit = self._get_ansatz_w(N)
