@@ -5,6 +5,11 @@ class TwoLocalAnsatz(Ansatz):
     def __init__(self, N):
         super().__init__(N)
         self.circuit = self._get_ansatz_w(N)
+        self.theta = None
+        self.N = N
+
+    def __str__(self):
+        return f"TwoLocal-{len(theta)} params"
 
     def _getTwoLocalAnsatz(self, N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=2):
         """

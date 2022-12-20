@@ -6,6 +6,11 @@ from src.vqe_algorithm.ansatz import Ansatz
 class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N):
         self.circuit = self._get_ansatz_w(N)
+        self.theta = None
+        self.N = N
+
+    def __str__(self):
+        return f"FeulnerHartmann-{len(self.theta)} params"
 
     def _get_ansatz_w(self, N):
         """
@@ -89,4 +94,7 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         Should update the ansatz using the given new parameters
         """
-        pass
+        self.theta = new_parameters
+        # pass
+
+    # def updateAnsatz(self, )
