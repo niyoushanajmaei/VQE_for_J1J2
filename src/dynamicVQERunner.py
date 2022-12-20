@@ -41,6 +41,7 @@ class DynamicVQERunner:
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         self.simulation = True
         self.totalMaxIter = totalMaxIter
+        self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
     def run_dynamic_vqe(self, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
@@ -98,12 +99,12 @@ class DynamicVQERunner:
         def store_intermediate_results(evalCount, parameters, mean, std):
             counts.append(evalCount)
             values.append(mean)
-            print(f"Current Estimated Energy: {mean}")
+            # print(f"Current Estimated Energy: {mean}")
 
         for i in range(0, self.totalMaxIter, step_iter):
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results, quantum_instance=qi, include_custom=True)
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
-            print("optimizer stopped here")
+            print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
             # do modifications?
             # still have initial theta at this stage, can process finalTheta and initialTheta
@@ -133,7 +134,7 @@ class DynamicVQERunner:
             plt.plot(values[i], label=optimizer)
 
         # plotting exact value
-        plt.axhline(y=Model.getExactEnergy(self.hamiltonianMatrix), color='r', linestyle='-', label="exact energy")
+        plt.axhline(y=self.exactEnergy, color='r', linestyle='-', label="exact energy")
 
         plt.xlabel('Eval count')
         plt.ylabel('Energy')

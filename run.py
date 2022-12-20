@@ -79,20 +79,14 @@ def testDynamicRunner():
     J1 = 1
     J2 = 0.5
 
-    # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
-
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=30)
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=100)
     result = vqe_runner.run_dynamic_vqe()
 
-    print(f"The algorithm took {time.time()-start:.2f}s")
     print(result)
 
-    print(result.optimal_point.tolist())
+    print(f"The algorithm took {time.time()-start:.2f}s")
 
-    # vqe_runner.compare_optimizers_and_ansatze()
-
-    exactResult = Model.getExactEnergy(vqe_runner.hamiltonianMatrix)
-    print(f"exactResult: {exactResult}")
+    print(f"exactResult: {vqe_runner.exactEnergy}")
 
 if __name__ == "__main__":
     # tune_adam()
