@@ -33,21 +33,6 @@ def test_with_qiskit():
     print(f"exactResult: {exactResult}")
 
 
-def test_with_vqe_algorithm ():
-    m = 2
-    n = 2
-    J1 = 1
-    J2 = 0.5
-
-    vqe = VQE(m, n, J1, J2, h=0, simulation=True, ansatz="FuelnerHartmann", open_bound=True)
-    result = vqe.run_vqe()
-
-    print(result)
-
-    exactResult = Model.getExactEnergy(vqe.hamiltonianMatrix)
-    print(f"exactResult: {exactResult}")
-
-
 def test_compare_ansatze():
     start = time.time()
     seed = 50
@@ -86,4 +71,3 @@ def tune_adam():
 if __name__ == "__main__":
     tune_adam()
     # test_compare_ansatze()
-
