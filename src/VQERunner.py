@@ -152,7 +152,7 @@ class VQERunner:
         twolocal = TwoLocalAnsatz(self.N)
         fuelner = FuelnerHartmannAnsatz(self.N)
         ansatze = {"twoLocal": twolocal.circuit}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=500), ADAM(maxiter=50, lr=0.6), ADAM(maxiter=50, amsgrad=True, lr=0.6)]
+        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=1000), ADAM(maxiter=1000, amsgrad=True, lr=0.009)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -175,6 +175,7 @@ class VQERunner:
 
                 vqe = VQE(ansatz, optimizer, callback=store_Intermediate_Results, quantum_instance=qi, include_custom=True)
                 result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
+                print(f"final result for {type(optimizer).__name__} was {result.optimal_value}")
 
                 convergeCnts[i] = np.asarray(counts)
                 convergeVals[i] = np.asarray(values)

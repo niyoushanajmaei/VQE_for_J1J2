@@ -6,7 +6,7 @@ class TwoLocalAnsatz(Ansatz):
         super().__init__(N)
         self.circuit = self._get_ansatz_w(N)
 
-    def _getTwoLocalAnsatz(self, N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=2):
+    def _getTwoLocalAnsatz(self, N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=10):
         """
             N: size of system. for a mxn lattice, N = m*n
             rotation_blocks and entanglement_blocks: set of gates to use in the twolocal circuit for rotation and entanglement

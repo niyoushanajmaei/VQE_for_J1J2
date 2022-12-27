@@ -5,6 +5,7 @@ from qiskit.utils import algorithm_globals, QuantumInstance
 
 from src.VQERunner import UnidentifiedAnsatzError, VQERunner, InvalidOptimizerError
 from src.model import Model
+from src.vqe_algorithm.ansatz import Ansatz
 from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
 from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 
@@ -29,7 +30,7 @@ class DynamicVQERunner:
 
         self.optimizer = SLSQP(maxiter=1000)
 
-        self.simulation = False
+        self.simulation = True
 
     def run_dynamic_vqe(self, monitor=True, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
@@ -85,4 +86,17 @@ class DynamicVQERunner:
             VQERunner.plotConvergences(counts, values, optimizers)
 
         return result
+
+
+def add_layers_duplicate(initial_ansatz: Ansatz) -> Ansatz:
+    """
+    Adds another layer to the end of the ansatz. The added ansatz is a duplicate of the last layer of the initial ansatz,
+    Both parameter-wise and gate wise.
+
+    :param initial_ansatz: the initial ansatz
+
+    :return: the final ansatz
+    """
+
+
 
