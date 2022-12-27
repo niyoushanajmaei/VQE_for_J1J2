@@ -9,7 +9,7 @@ class TwoLocalAnsatz(Ansatz):
         self.N = N
 
     def __str__(self):
-        return f"TwoLocal-{len(theta)} params"
+        return f"TwoLocal-{len(self.theta)} params"
 
     def _getTwoLocalAnsatz(self, N, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear', reps=2):
         """
@@ -39,4 +39,5 @@ class TwoLocalAnsatz(Ansatz):
         """
         Should update the ansatz using the given new parameters
         """
-        pass
+        self.theta = new_parameters
+        # pass

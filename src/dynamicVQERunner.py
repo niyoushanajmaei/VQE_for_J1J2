@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from qiskit.algorithms import VQE
-from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM
+from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM, COBYLA
 from qiskit.utils import algorithm_globals, QuantumInstance
 
 from src.VQERunner import UnidentifiedAnsatzError, VQERunner, InvalidOptimizerError
@@ -70,7 +70,7 @@ class DynamicVQERunner:
         step_iter_add_layer = 20
 
         # number of iterations before stopping the optimizer for modifications
-        step_iter = 10
+        step_iter = np.inf
         step_iter = min(step_iter, self.totalMaxIter)
 
         seed = self.seed
@@ -89,6 +89,8 @@ class DynamicVQERunner:
         elif self.optimizer == "AMSGRAD":
             lr = 0.009
             opt = ADAM(maxiter=step_iter, lr=lr, amsgrad=True)
+        elif self.optimizer == "COBYLA":
+            opt = COBYLA(maxiter=step_iter, tol=1e-6)
         else:
             raise InvalidOptimizerError
         print(f"Using {self.optimizer} optimizer with {self.totalMaxIter} total iterations, stopping every {step_iter} iterations for modifications")
@@ -139,5 +141,7 @@ class DynamicVQERunner:
         plt.xlabel('Eval count')
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
+        plt.plot([], [], ' ', label=f"Final VQE Estimate: {np.round(values[0][-1], 6)}")
         plt.legend(loc='upper right')
+        # plt.annotate()
         plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")

@@ -70,16 +70,17 @@ def tune_adam():
 def testDynamicRunner():
     start = time.time()
     seed = 50
-    # ansatz = "TwoLocal"
-    ansatz = "FeulnerHartmann"
-    optimizer = "AMSGRAD"
+    # ansatz in {"TwoLocal", "FeulnerHartmann"}
+    ansatz = "TwoLocal"
+    # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
+    optimizer = "SLSQP"
 
     m = 3
     n = 3
     J1 = 1
     J2 = 0.5
 
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=100)
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
     result = vqe_runner.run_dynamic_vqe()
 
     print(result)
