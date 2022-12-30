@@ -1,12 +1,12 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
+from matplotlib import pyplot as plt
 from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM, COBYLA
 from qiskit.utils import algorithm_globals, QuantumInstance
 
 from src.VQERunner import UnidentifiedAnsatzError, VQERunner, InvalidOptimizerError
 from src.model import Model
+from src.vqe_algorithm.ansatz import Ansatz
 from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
 from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 
@@ -144,3 +144,15 @@ class DynamicVQERunner:
         plt.legend(loc='upper right')
         # plt.annotate()
         plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")
+
+    def add_layers_duplicate(initial_ansatz: Ansatz) -> Ansatz:
+        """
+        Adds another layer to the end of the ansatz. The added ansatz is a duplicate of the last layer of the initial ansatz,
+        Both parameter-wise and gate wise.
+
+        :param initial_ansatz: the initial ansatz
+
+        :return: the final ansatz
+        """
+
+
