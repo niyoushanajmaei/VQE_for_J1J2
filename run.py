@@ -80,7 +80,7 @@ def testDynamicRunner():
     J1 = 1
     J2 = 0.5
 
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=50)
     result = vqe_runner.run_dynamic_vqe()
 
     print(result)

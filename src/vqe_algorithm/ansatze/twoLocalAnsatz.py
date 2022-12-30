@@ -33,11 +33,10 @@ class TwoLocalAnsatz(Ansatz):
         """
         should return a list of parameters of the ansatz
         """
-        pass
+        return self.theta
 
     def update_parameters(self, new_parameters):
         """
         Should update the ansatz using the given new parameters
         """
         self.theta = new_parameters
-        # pass

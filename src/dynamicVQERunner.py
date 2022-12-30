@@ -69,7 +69,7 @@ class DynamicVQERunner:
         step_iter_add_layer = 20
 
         # number of iterations before stopping the optimizer for modifications
-        step_iter = np.inf
+        step_iter = 10
         step_iter = min(step_iter, self.totalMaxIter)
 
         seed = self.seed
@@ -109,10 +109,16 @@ class DynamicVQERunner:
             finalTheta = result.optimal_point.tolist()
             # do modifications?
             # still have initial theta at this stage, can process finalTheta and initialTheta
-            if initialTheta:
-                pass
-            initialTheta = finalTheta
             self.ansatz.update_parameters(finalTheta)
+            if initialTheta:
+                paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                mx = np.max(paramGrad)
+                assert mx   # make sure it isn't zero, since we will be using it to normalize paramGrad
+                # print(paramGrad)
+                paramGrad = paramGrad/mx
+                # print(paramGrad)
+            # MODIFY ANSATZ!!
+            initialTheta = self.ansatz.get_parameters()
 
         # save convergence plot for the run
         counts = [np.asarray(counts)]
