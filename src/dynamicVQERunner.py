@@ -52,7 +52,7 @@ class DynamicVQERunner:
         :param small_gradient_deletion: if True, "alpha" of percent gates with the smallest parameter gradient are
             removed from that layer
         :param small_gradient_add_to_end: if True, "alpha" percent of gates with the smallest parameter gradient are
-            added removed and added to the end of the ansatz instead
+            removed and added to the end of the ansatz instead
         :param large_gradient_add: if True, "beta" percent of gates with the largest parameter gradient are either
             duplicated in place, or added to the end of the ansatz
         :param add_layers_duplicate: if True, a duplicate layer of the last layer is added every "step_iter"

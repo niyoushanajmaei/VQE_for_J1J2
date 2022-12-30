@@ -82,6 +82,16 @@ class FuelnerHartmannAnsatz(Ansatz):
                     indParam += 1
                 qc.barrier()
         # print(numParams - indParam)
+        countParamGates = 0  #count the number of gates with parameters
+        # needed when dynamicVQERunner calls to include a particular gate again due to a large gradient or so
+        for gate in qc.data:
+            if (gate[0].params):
+                print('\ngate name:', gate[0].name)
+                print('qubit(s) acted on:', gate[1])
+                print('other parameters (such as angles):', gate[0].params)
+                countParamGates+=1
+        print(countParamGates)
+        print(numParams)
         return qc
 
     def get_parameters(self) -> list:
