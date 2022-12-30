@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 
 from src.VQERunner import VQERunner
 from src.model import Model
+from src.dynamicVQERunner import DynamicVQERunner
 import numpy as np
 
 
@@ -12,6 +13,7 @@ def test_with_qiskit():
     seed = 50
     ansatz = "TwoLocal"
     # ansatz = "FeulnerHartmann"
+    optimizer = "SLSQP"
 
     m = 3
     n = 3
@@ -20,7 +22,7 @@ def test_with_qiskit():
 
     # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz, optimizer="SLSQP")
+    vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz, optimizer=optimizer)
     result = vqe_runner.runVQE(monitor=True)
 
     print(f"The algorithm took {time.time()-start:.2f}s")
@@ -68,6 +70,27 @@ def tune_adam():
     vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
     vqe_runner.tune_lr_iter_for_optimizer()
 
+def testDynamicRunner():
+    start = time.time()
+    seed = 50
+    # ansatz in {"TwoLocal", "FeulnerHartmann"}
+    ansatz = "TwoLocal"
+    # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
+    optimizer = "SLSQP"
+
+    m = 3
+    n = 3
+    J1 = 1
+    J2 = 0.5
+
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
+    result = vqe_runner.run_dynamic_vqe()
+
+    print(result)
+
+    print(f"The algorithm took {time.time()-start:.2f}s")
+
+    print(f"exactResult: {vqe_runner.exactEnergy}")
 
 def tune_number_of_layers_for_adam():
     start = time.time()
@@ -127,7 +150,7 @@ def check_local_minima_hypothesis():
 
 
 if __name__ == "__main__":
-    #tune_adam()
-    #test_compare_ansatze()
-    #test_with_qiskit()
-    check_local_minima_hypothesis()
+    # tune_adam()
+    # test_compare_ansatze()
+    testDynamicRunner()
+    #check_local_minima_hypothesis()

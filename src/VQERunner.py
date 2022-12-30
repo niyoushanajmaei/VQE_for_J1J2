@@ -14,6 +14,8 @@ from src.model import Model
 from qiskit import IBMQ
 from qiskit.providers.ibmq import least_busy
 
+from time import localtime, strftime
+
 
 
 class VQERunner:
@@ -143,7 +145,7 @@ class VQERunner:
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
         plt.legend(loc='upper right')
-        plt.savefig(f"graphs/{fileName}")
+        plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")
 
     def compare_Optimizers_And_Ansatze(self):
         """
@@ -212,8 +214,8 @@ class VQERunner:
 
         print(f"Done. Overall best result was: {best_result} for lr={best_lr}")
 
-
-    def get_backend(self, simulate: bool = True):
+    @staticmethod
+    def get_backend(simulate: bool = True):
         """
         returns an Aer simulator if simulate = True
         and an IBMQ backend if simulate = False

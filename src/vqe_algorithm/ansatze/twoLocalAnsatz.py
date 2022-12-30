@@ -5,6 +5,11 @@ class TwoLocalAnsatz(Ansatz):
     def __init__(self, N, reps=10):
         super().__init__(N, reps)
         self.circuit = self._get_ansatz_w(N, reps)
+        self.theta = None
+        self.N = N
+
+    def __str__(self):
+        return f"TwoLocal-{len(self.theta)} params"
 
     def _getTwoLocalAnsatz(self, N, reps, rotation_blocks=['ry'], entanglement_blocks= ['cx'], entanglement='linear'):
         """
@@ -34,4 +39,4 @@ class TwoLocalAnsatz(Ansatz):
         """
         Should update the ansatz using the given new parameters
         """
-        pass
+        self.theta = new_parameters

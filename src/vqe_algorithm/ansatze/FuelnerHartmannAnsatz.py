@@ -7,6 +7,8 @@ class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N, reps=7):
         super().__init__(N, reps)
         self.circuit = self._get_ansatz_w(N, reps)
+        self.theta = None
+        self.N = N
 
     def _get_ansatz_w(self, N, reps):
         """
@@ -15,6 +17,16 @@ class FuelnerHartmannAnsatz(Ansatz):
         :param N: size of the lattice
         """
         return self._get_ansatz(N,reps)
+
+    @staticmethod
+    def XXYYZZ(theta_i):
+        # make an instruction set/gate out of XXYYZZ to make it simpler to work with the XXYYZZ gates
+        qc = QuantumCircuit(2)
+        qc.rxx(theta_i, 0, 1)
+        qc.ryy(theta_i, 0, 1)
+        qc.rzz(theta_i, 0, 1)
+        XXYYZZ = qc.to_gate()
+        return qc.to_gate(label = 'XXYYZZ')
 
     def _get_ansatz(self, N, reps):
         """
@@ -63,12 +75,9 @@ class FuelnerHartmannAnsatz(Ansatz):
             qc.barrier()
             for gate in XXYYZZGatesList:
                 for qubits in gate:
-                    qc.rxx(theta[indParam], qubits[0], qubits[1])
-                    qc.ryy(theta[indParam], qubits[0], qubits[1])
-                    qc.rzz(theta[indParam], qubits[0], qubits[1])
+                    qc.append(FuelnerHartmannAnsatz.XXYYZZ(theta[indParam]), [qubits[0], qubits[1]])
                     indParam += 1
                 qc.barrier()
-
         # print(numParams - indParam)
         return qc
 
@@ -82,4 +91,4 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         Should update the ansatz using the given new parameters
         """
-        pass
+        self.theta = new_parameters
