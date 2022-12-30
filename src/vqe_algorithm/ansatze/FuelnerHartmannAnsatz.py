@@ -4,21 +4,22 @@ from src.vqe_algorithm.ansatz import Ansatz
 
 
 class FuelnerHartmannAnsatz(Ansatz):
-    def __init__(self, N):
-        self.circuit = self._get_ansatz_w(N)
+    def __init__(self, N, reps=7):
+        super().__init__(N, reps)
+        self.circuit = self._get_ansatz_w(N, reps)
         self.theta = None
         self.N = N
 
     def __str__(self):
         return f"FeulnerHartmann-{len(self.theta)} params"
 
-    def _get_ansatz_w(self, N):
+    def _get_ansatz_w(self, N, reps):
         """
         Wrapper class for _get_ansatz
 
         :param N: size of the lattice
         """
-        return self._get_ansatz(N)
+        return self._get_ansatz(N, reps)
 
     @staticmethod
     def XXYYZZ(theta_i):
@@ -30,7 +31,7 @@ class FuelnerHartmannAnsatz(Ansatz):
         XXYYZZ = qc.to_gate()
         return qc.to_gate(label = 'XXYYZZ')
 
-    def _get_ansatz(self, N, nLayers = 3):
+    def _get_ansatz(self, N, reps):
         """
            Ansatz described in https://arxiv.org/abs/2205.11198
 
@@ -49,7 +50,7 @@ class FuelnerHartmannAnsatz(Ansatz):
                 should this be set as an input? or return this?
             indParam: indicates how many parameters have been used up so far
         """
-        numParams = 18 + 21*nLayers
+        numParams = 18 + 21*reps
         theta = ParameterVector('theta', numParams)
         indParam = 0
         # describe sets of gates:
@@ -70,7 +71,7 @@ class FuelnerHartmannAnsatz(Ansatz):
             qc.ry(theta[indParam], i)
             indParam += 1
         qc.barrier()
-        for i in range(nLayers):
+        for i in range(reps):
             for i in range(N):
                 qc.rz(theta[indParam], i)
                 indParam += 1
@@ -82,7 +83,6 @@ class FuelnerHartmannAnsatz(Ansatz):
                 qc.barrier()
         # print(numParams - indParam)
         return qc
-
 
     def get_parameters(self) -> list:
         """
