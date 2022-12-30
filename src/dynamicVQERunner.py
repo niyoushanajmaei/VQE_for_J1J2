@@ -49,8 +49,7 @@ class DynamicVQERunner:
         """
         Runs the VQE algorithm
 
-        :param monitor: if True, the convergence plot is saved
-        :param small_gradient_deletion: if Ture, "alpha" of percent gates with the smallest parameter gradient are
+        :param small_gradient_deletion: if True, "alpha" of percent gates with the smallest parameter gradient are
             removed from that layer
         :param small_gradient_add_to_end: if True, "alpha" percent of gates with the smallest parameter gradient are
             added removed and added to the end of the ansatz instead
