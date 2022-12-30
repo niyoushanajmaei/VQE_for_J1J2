@@ -18,7 +18,7 @@ from qiskit.providers.ibmq import least_busy
 
 class VQERunner:
 
-    def __init__(self, m, n, J1, J2, h=0, periodic_hamiltonian = False, simulation = True, seed=50, ansatz="FeulnerHartmann", optimizer="SLSQP"):
+    def __init__(self, m, n, J1, J2, h=0, periodic_hamiltonian = False, simulation = True, seed=50, ansatz="FeulnerHartmann", optimizer="SLSQP", ansatz_rep=7):
         """
         For running on back-end "SPSA" is used as optimizer
         For simualtion "SLSQP" is used as optimizer
@@ -31,9 +31,9 @@ class VQERunner:
         """
         self.seed = seed
         if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz(m*n)
+            self.ansatz = FuelnerHartmannAnsatz(m*n, ansatz_rep)
         elif ansatz == "TwoLocal":
-            self.ansatz = TwoLocalAnsatz(m*n)
+            self.ansatz = TwoLocalAnsatz(m*n, ansatz_rep)
         else:
             raise UnidentifiedAnsatzError
         self.m = m
@@ -83,21 +83,22 @@ class VQERunner:
 
 
         ansatz = self.ansatz.circuit
-        print(ansatz)
+        #print(ansatz)
 
 
         if self.optimizer == "SLSQP":
             iter = 1000
             opt = SLSQP(maxiter=iter)
-            print(f"Using SLSQP optimizer with {iter} iterations")
+            #print(f"Using SLSQP optimizer with {iter} iterations")
         elif self.optimizer == "SPSA":
             # TODO for SPSA, investigate the usage of a user defined gradient
-            iter = 10
+            iter = 1000
             opt = SPSA(maxiter=iter)
-            print(f"Using SPSA optimizer with {iter} iterations")
+            #print(f"Using SPSA optimizer with {iter} iterations")
         elif self.optimizer == "AMSGRAD":
-            iter = 50
+            iter = 1000
             lr = 0.5
+            #lr = 0.009
             opt = ADAM(maxiter=iter, lr=lr, amsgrad=True)
         else:
             raise InvalidOptimizerError
@@ -109,7 +110,7 @@ class VQERunner:
             def store_Intermediate_Results(evalCount, parameters, mean, std):
                 counts.append(evalCount)
                 values.append(mean)
-                print(f"Current Estimated Energy: {mean}")
+                #print(f"Current Estimated Energy: {mean}")
 
             vqe = VQE(ansatz, optimizer=opt, callback=store_Intermediate_Results, quantum_instance=qi,include_custom=True)
         else:
