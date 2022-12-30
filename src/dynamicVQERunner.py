@@ -19,12 +19,12 @@ from time import localtime, strftime
 
 
 class DynamicVQERunner:
-    def __init__(self,  m, n, J1, J2, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
+    def __init__(self,  m, n, J1, J2, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", initial_ansatz_rep=7, totalMaxIter = 1000):
         self.seed = 50
         if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz(m * n)
+            self.ansatz = FuelnerHartmannAnsatz(m*n, initial_ansatz_rep)
         elif ansatz == "TwoLocal":
-            self.ansatz = TwoLocalAnsatz(m * n)
+            self.ansatz = TwoLocalAnsatz(m*n, initial_ansatz_rep)
         else:
             raise UnidentifiedAnsatzError
 
