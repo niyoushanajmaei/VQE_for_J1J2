@@ -141,6 +141,7 @@ class FeulnerHartmannAnsatz(Ansatz):
                         case _:
                             qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
 
+                    qc.draw(output='mpl', filename=f"{len(theta)}")
                     self.circuit = qc
                     self.theta = theta
                     break

@@ -109,6 +109,7 @@ class DynamicVQERunner:
             # print(f"Current Estimated Energy: {mean}")
 
         for i in range(0, self.totalMaxIter, step_iter):
+            # print(initialTheta)
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
                       quantum_instance=qi, include_custom=True)
             if initialTheta:
