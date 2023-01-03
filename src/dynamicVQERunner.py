@@ -117,7 +117,7 @@ class DynamicVQERunner:
                 # print(paramGrad)
                 paramGrad = paramGrad/mx
                 # print(paramGrad)
-            # MODIFY ANSATZ!!
+                self.ansatz.add_large_gradient_gate_end(paramGrad)
             initialTheta = self.ansatz.get_parameters()
 
         # save convergence plot for the run
