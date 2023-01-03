@@ -109,7 +109,8 @@ class DynamicVQERunner:
             # print(f"Current Estimated Energy: {mean}")
 
         for i in range(0, self.totalMaxIter, step_iter):
-            vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results, quantum_instance=qi, include_custom=True)
+            vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
+                      quantum_instance=qi, include_custom=True)
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
@@ -124,10 +125,11 @@ class DynamicVQERunner:
                 # change both the ansatz and the theta accordingly
                 self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
                 ansatz = self.ansatz.circuit
-                initialTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
-                self.ansatz.update_parameters(initialTheta)
+                finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
+                self.ansatz.update_parameters(finalTheta)
                 print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                       f" {len(finalTheta)}")
+                initialTheta = finalTheta
 
         # save convergence plot for the run
         counts = [np.asarray(counts)]
@@ -138,8 +140,8 @@ class DynamicVQERunner:
 
         return result
 
-    def initialise_ansatz(self,name, N, reps):
-        if name == "FeulnerHartmann":
+    def initialise_ansatz(self, name, N, reps):
+        if name == "FuelnerHartmann":
             self.ansatz = FuelnerHartmannAnsatz(N, reps)
         elif name == "TwoLocal":
             self.ansatz = TwoLocalAnsatz(N, reps)
@@ -166,7 +168,7 @@ class DynamicVQERunner:
         plt.plot([], [], ' ', label=f"Final VQE Estimate: {np.round(values[0][-1], 6)}")
         plt.legend(loc='upper right')
         # plt.annotate()
-        plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")
+        plt.savefig(f"graphs/{fileName}-{strftime('%Y-%m-%d %H%M', localtime())}")
 
     def add_layers_duplicate(initial_ansatz: Ansatz) -> Ansatz:
         """

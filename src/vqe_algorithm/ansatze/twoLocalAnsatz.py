@@ -53,5 +53,5 @@ class TwoLocalAnsatz(Ansatz):
         :param current_params: the list of the current parameters of the circuit
         :return: the list of the final parameters of the circuit
         """
-        current_params.append(list(np.zeros(self.N)))
+        current_params.extend(list(np.zeros(self.N)))
         return current_params

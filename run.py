@@ -74,9 +74,9 @@ def tune_adam():
 def testDynamicRunner():
     start = time.time()
     seed = 50
-    # ansatz in {"TwoLocal", "FeulnerHartmann"}
-    ansatz = "TwoLocal"
-    layers = 5
+    # ansatz in {"TwoLocal", "FuelnerHartmann"}
+    ansatz = "FuelnerHartmann"
+    layers = 7
     # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
     optimizer = "SLSQP"
 
@@ -86,7 +86,7 @@ def testDynamicRunner():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
-    result = vqe_runner.run_dynamic_vqe(large_gradient_add=True, add_layers_fresh=True)
+    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
 
     print(result)
 
