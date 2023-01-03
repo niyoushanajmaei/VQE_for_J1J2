@@ -74,7 +74,7 @@ def tune_adam():
 def testDynamicRunner():
     start = time.time()
     seed = 50
-    # ansatz in {"TwoLocal", "FuelnerHartmann"}
+    # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "FeulnerHartmann"
     layers = 5
     # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}

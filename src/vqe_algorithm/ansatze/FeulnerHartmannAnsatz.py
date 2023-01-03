@@ -5,7 +5,7 @@ from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
 
 
-class FuelnerHartmannAnsatz(Ansatz):
+class FeulnerHartmannAnsatz(Ansatz):
     def __init__(self, N, reps=7):
         if N != 9:
             raise NotImplementedError
@@ -14,11 +14,11 @@ class FuelnerHartmannAnsatz(Ansatz):
         self.circuit = self._get_ansatz_w(N, reps)
         self.theta = None
         self.N = N
-        self.name = "FuelnerHartmann"
+        self.name = "FeulnerHartmann"
         self.reps = reps
 
     def __str__(self):
-        return f"FuelnerHartmann-{len(self.theta)} params"
+        return f"FeulnerHartmann-{len(self.theta)} params"
 
     def _get_ansatz_w(self, N, reps):
         """
@@ -85,7 +85,7 @@ class FuelnerHartmannAnsatz(Ansatz):
             qc.barrier()
             for gate in XXYYZZGatesList:
                 for qubits in gate:
-                    qc.append(FuelnerHartmannAnsatz.XXYYZZ(theta[indParam]), [qubits[0], qubits[1]])
+                    qc.append(FeulnerHartmannAnsatz.XXYYZZ(theta[indParam]), [qubits[0], qubits[1]])
                     indParam += 1
                 qc.barrier()
         # print(numParams - indParam)
@@ -139,7 +139,7 @@ class FuelnerHartmannAnsatz(Ansatz):
                         case "rz":
                             qc.rz(newParam, gate[1])
                         case _:
-                            qc.append(FuelnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
+                            qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
 
                     self.circuit = qc
                     self.theta = theta

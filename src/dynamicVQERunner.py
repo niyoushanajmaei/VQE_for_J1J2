@@ -7,7 +7,7 @@ from qiskit.utils import algorithm_globals, QuantumInstance
 from src.VQERunner import UnidentifiedAnsatzError, VQERunner, InvalidOptimizerError
 from src.model import Model
 from src.vqe_algorithm.ansatz import Ansatz
-from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
+from src.vqe_algorithm.ansatze.FeulnerHartmannAnsatz import FeulnerHartmannAnsatz
 from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 
 from time import localtime, strftime
@@ -65,7 +65,7 @@ class DynamicVQERunner:
         if add_layers_fresh and not large_gradient_add:
             if self.ansatz.name == "TwoLocal":
                 initial_reps = 4  # 40 parameters
-            elif self.ansatz.name == "FuelnerHartmann":
+            elif self.ansatz.name == "FeulnerHartmann":
                 initial_reps = 1 # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
@@ -111,6 +111,8 @@ class DynamicVQERunner:
         for i in range(0, self.totalMaxIter, step_iter):
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
                       quantum_instance=qi, include_custom=True)
+            if initialTheta:
+                print("estimate after ansatz modification:", vqe.get_energy_evaluation(operator=self.hamiltonian)(initialTheta))
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
@@ -148,8 +150,8 @@ class DynamicVQERunner:
         return result
 
     def initialise_ansatz(self, name, N, reps):
-        if name == "FuelnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz(N, reps)
+        if name == "FeulnerHartmann":
+            self.ansatz = FeulnerHartmannAnsatz(N, reps)
         elif name == "TwoLocal":
             self.ansatz = TwoLocalAnsatz(N, reps)
         else:
