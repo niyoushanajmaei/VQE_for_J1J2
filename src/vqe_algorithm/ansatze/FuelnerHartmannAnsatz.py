@@ -1,5 +1,6 @@
 import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
+from qiskit.circuit import QuantumCircuit, ParameterVector, Parameter
 from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
 
@@ -18,9 +19,6 @@ class FuelnerHartmannAnsatz(Ansatz):
 
     def __str__(self):
         return f"FuelnerHartmann-{len(self.theta)} params"
-
-    def __str__(self):
-        return f"FeulnerHartmann-{len(self.theta)} params"
 
     def _get_ansatz_w(self, N, reps):
         """
@@ -91,16 +89,6 @@ class FuelnerHartmannAnsatz(Ansatz):
                     indParam += 1
                 qc.barrier()
         # print(numParams - indParam)
-        countParamGates = 0  #count the number of gates with parameters
-        # needed when dynamicVQERunner calls to include a particular gate again due to a large gradient or so
-        for gate in qc.data:
-            if (gate[0].params):
-                print('\ngate name:', gate[0].name)
-                print('qubit(s) acted on:', gate[1])
-                print('other parameters (such as angles):', gate[0].params)
-                countParamGates+=1
-        print(countParamGates)
-        print(numParams)
         return qc
 
     def get_parameters(self) -> list:
@@ -115,6 +103,47 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         self.theta = new_parameters
 
+    def add_large_gradient_gate_end(self, paramGrad):
+        """
+            Given the parameter gradient, selects the gate(s) with largest gradient(s)
+            ***TO THE END OF THE CIRCUIT***
+
+            :paramGrad: parameter gradient after latest optimization
+
+            Does not return anything: the new (extended) parameters are updated within the ansatz object
+            and the dynamicVQERunner copy of parameters needs to reassigned to this updated list
+
+            Currently it only adds a copy of the gate with largest gradient to the end.
+            - Copy multiple gates, say top "beta" percent of gates with highest gradient copied
+            - parameters for the new gate: initialized to
+                - 0
+                - *the same value as its parent, or
+                - to a random value?
+        """
+        qc = self.circuit
+        theta = self.theta
+
+        indexOfMax = np.argmax(paramGrad)    # to "reach" the gate with highest gradient
+        parammedGateIndex = -1  # index the gates that have parameters
+        for gate in qc.data:
+            if (gate[0].params):
+                parammedGateIndex+=1
+                if (parammedGateIndex == indexOfMax):
+                    newParam = Parameter(f"theta[{len(theta)}]")
+                    theta.append(0)
+                    match gate[0].name:
+                        case "rx":
+                            qc.rx(newParam, gate[1])
+                        case "ry":
+                            qc.ry(newParam, gate[1])
+                        case "rz":
+                            qc.rz(newParam, gate[1])
+                        case _:
+                            qc.append(FuelnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
+
+                    self.circuit = qc
+                    self.theta = theta
+                    break
 
     def add_fresh_parameter_layer(self, current_params: list) -> list:
         """

@@ -122,11 +122,11 @@ class DynamicVQERunner:
                 if initialTheta:
                     paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
                     mx = np.max(paramGrad)
-                    assert mx   # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    assert mx  # make sure it isn't zero, since we will be using it to normalize paramGrad
                     # print(paramGrad)
-                    paramGrad = paramGrad/mx
+                    paramGrad = paramGrad / mx
                     # print(paramGrad)
-                # MODIFY ANSATZ!!
+                    self.ansatz.add_large_gradient_gate_end(paramGrad)
                 initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
                 # change both the ansatz and the theta accordingly
