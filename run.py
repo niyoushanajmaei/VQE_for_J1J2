@@ -70,12 +70,13 @@ def tune_adam():
     vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
     vqe_runner.tune_lr_iter_for_optimizer()
 
+
 def testDynamicRunner():
     start = time.time()
     seed = 50
-    # ansatz in {"TwoLocal", "FeulnerHartmann"}
-    ansatz = "TwoLocal"
-    layers = 10
+    # ansatz in {"TwoLocal", "FuelnerHartmann"}
+    ansatz = "FuelnerHartmann"
+    layers = 7
     # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
     optimizer = "SLSQP"
 
@@ -84,14 +85,15 @@ def testDynamicRunner():
     J1 = 1
     J2 = 0.5
 
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, initial_ansatz_rep=layers, totalMaxIter=50)
-    result = vqe_runner.run_dynamic_vqe()
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
+    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
 
     print(result)
 
     print(f"The algorithm took {time.time()-start:.2f}s")
 
     print(f"exactResult: {vqe_runner.exactEnergy}")
+
 
 def tune_number_of_layers_for_adam():
     start = time.time()
@@ -106,6 +108,7 @@ def tune_number_of_layers_for_adam():
 
     vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz)
     vqe_runner.tune_lr_iter_for_optimizer()
+
 
 def check_local_minima_hypothesis():
     # Running the TwoLocal Ansatz with random seeds
@@ -145,7 +148,7 @@ def check_local_minima_hypothesis():
 
     with open(f"graphs/results_TL_open_{layers}", "w") as f:
         for e in optimal_values:
-            f.write(e)
+            f.write(f"{e}")
         f.write(f"minimum achieved: {min(optimal_values)}")
 
 

@@ -19,14 +19,12 @@ from time import localtime, strftime
 
 
 class DynamicVQERunner:
-    def __init__(self,  m, n, J1, J2, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", initial_ansatz_rep=7, totalMaxIter = 1000):
+
+    def __init__(self,  m, n, J1, J2, ansatz_rep = 7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
         self.seed = 50
-        if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz(m*n, initial_ansatz_rep)
-        elif ansatz == "TwoLocal":
-            self.ansatz = TwoLocalAnsatz(m*n, initial_ansatz_rep)
-        else:
-            raise UnidentifiedAnsatzError
+        self.ansatz = None
+        self.initialise_ansatz(ansatz,n*m, ansatz_rep)
+
 
         self.optimizer = optimizer
         self.m = m
@@ -43,11 +41,12 @@ class DynamicVQERunner:
         self.totalMaxIter = totalMaxIter
         self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
-    def run_dynamic_vqe(self, small_gradient_deletion=False, small_gradient_add_to_end=False,
+    def run_dynamic_vqe(self, step_iter=np.inf, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
                         large_gradient_add=False):
         """
         Runs the VQE algorithm
+        # For now, setting add_layers and large_gradient_adds to True simultaneously is not implemented
 
         :param small_gradient_deletion: if True, "alpha" of percent gates with the smallest parameter gradient are
             removed from that layer
@@ -58,19 +57,28 @@ class DynamicVQERunner:
         :param add_layers_duplicate: if True, a duplicate layer of the last layer is added every "step_iter"
             iterations
         :param add_layers_fresh: if True, an uninitialized layer is added every "step_iter" iterations
+        :param initial_reps: The number of repititions in the ansatz to begin with
         :param random_pseudo_removal: if True, at each iteration, a randomly chosen "gamma" percent of the gates are
             temporarily removed from the ansatz
 
         """
-        # variables for how often the dynamic actions should be done
-        step_iter_small_gradient = 10
-        step_iter_random_pseudo_removal = 10
-        step_iter_large_gradient = 10
-        step_iter_add_layer = 20
+        final_reps = self.ansatz.reps
+        # number of iterations before adding a layer to the ansatz
+        if add_layers_fresh and not large_gradient_add:
+            if self.ansatz.name == "TwoLocal":
+                initial_reps = 4  # 40 parameters
+            elif self.ansatz.name == "FuelnerHartmann":
+                initial_reps = 1 # 39 parameters
+            else:
+                raise UnidentifiedAnsatzError
+            self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
+            step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
+        elif large_gradient_add and not add_layers_fresh:
+            # number of iterations before stopping the optimizer for modifications
+            step_iter = min(step_iter, self.totalMaxIter)
+        else:
+            raise SimultaneousGradientAndLayer
 
-        # number of iterations before stopping the optimizer for modifications
-        step_iter = 10
-        step_iter = min(step_iter, self.totalMaxIter)
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -103,22 +111,34 @@ class DynamicVQERunner:
             # print(f"Current Estimated Energy: {mean}")
 
         for i in range(0, self.totalMaxIter, step_iter):
-            vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results, quantum_instance=qi, include_custom=True)
+            vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
+                      quantum_instance=qi, include_custom=True)
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
-            # do modifications?
-            # still have initial theta at this stage, can process finalTheta and initialTheta
-            self.ansatz.update_parameters(finalTheta)
-            if initialTheta:
-                paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
-                mx = np.max(paramGrad)
-                assert mx   # make sure it isn't zero, since we will be using it to normalize paramGrad
-                # print(paramGrad)
-                paramGrad = paramGrad/mx
-                # print(paramGrad)
-            # MODIFY ANSATZ!!
-            initialTheta = self.ansatz.get_parameters()
+
+            if large_gradient_add:
+                # do modifications?
+                # still have initial theta at this stage, can process finalTheta and initialTheta
+                self.ansatz.update_parameters(finalTheta)
+                if initialTheta:
+                    paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                    mx = np.max(paramGrad)
+                    assert mx   # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    # print(paramGrad)
+                    paramGrad = paramGrad/mx
+                    # print(paramGrad)
+                # MODIFY ANSATZ!!
+                initialTheta = self.ansatz.get_parameters()
+            if add_layers_fresh:
+                # change both the ansatz and the theta accordingly
+                self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
+                ansatz = self.ansatz.circuit
+                finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
+                self.ansatz.update_parameters(finalTheta)
+                print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
+                      f" {len(finalTheta)}")
+                initialTheta = finalTheta
 
         # save convergence plot for the run
         counts = [np.asarray(counts)]
@@ -128,6 +148,14 @@ class DynamicVQERunner:
         self.plotConvergences(counts, values, optimizers, fileName=fileName)
 
         return result
+
+    def initialise_ansatz(self, name, N, reps):
+        if name == "FuelnerHartmann":
+            self.ansatz = FuelnerHartmannAnsatz(N, reps)
+        elif name == "TwoLocal":
+            self.ansatz = TwoLocalAnsatz(N, reps)
+        else:
+            raise UnidentifiedAnsatzError
 
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
         """
@@ -149,7 +177,7 @@ class DynamicVQERunner:
         plt.plot([], [], ' ', label=f"Final VQE Estimate: {np.round(values[0][-1], 6)}")
         plt.legend(loc='upper right')
         # plt.annotate()
-        plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")
+        plt.savefig(f"graphs/{fileName}-{strftime('%Y-%m-%d %H%M', localtime())}")
 
     def add_layers_duplicate(initial_ansatz: Ansatz) -> Ansatz:
         """
@@ -161,4 +189,9 @@ class DynamicVQERunner:
         :return: the final ansatz
         """
 
+class SimultaneousGradientAndLayer(RuntimeError):
+    """
+        The feature of having the gradient-based dynamic VQE and the gradual addition of layers is not implemented yet
+    """
+    pass
 

@@ -1,3 +1,4 @@
+import numpy as np
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit.circuit.library import RXXGate, RYYGate, RZZGate
 from src.vqe_algorithm.ansatz import Ansatz
@@ -5,10 +6,18 @@ from src.vqe_algorithm.ansatz import Ansatz
 
 class FuelnerHartmannAnsatz(Ansatz):
     def __init__(self, N, reps=7):
+        if N != 9:
+            raise NotImplementedError
+
         super().__init__(N, reps)
         self.circuit = self._get_ansatz_w(N, reps)
         self.theta = None
         self.N = N
+        self.name = "FuelnerHartmann"
+        self.reps = reps
+
+    def __str__(self):
+        return f"FuelnerHartmann-{len(self.theta)} params"
 
     def __str__(self):
         return f"FeulnerHartmann-{len(self.theta)} params"
@@ -96,4 +105,16 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         self.theta = new_parameters
 
-    # def updateAnsatz(self, )
+
+    def add_fresh_parameter_layer(self, current_params: list) -> list:
+        """
+        Should add a layers of zeros to the end of the current_params list.
+
+        :param current_params: the list of the current parameters of the circuit
+        :return: the list of the final parameters of the circuit
+        """
+        if self.N != 9:
+            raise NotImplementedError
+
+        current_params.extend(list(np.zeros(21)))
+        return current_params
