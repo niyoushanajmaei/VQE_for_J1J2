@@ -86,7 +86,7 @@ def testDynamicRunner():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
-    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
+    result = vqe_runner.run_dynamic_vqe(large_gradient_add=True)
 
     print(result)
 

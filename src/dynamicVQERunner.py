@@ -24,8 +24,6 @@ class DynamicVQERunner:
         self.seed = 50
         self.ansatz = None
         self.initialise_ansatz(ansatz,n*m, ansatz_rep)
-
-
         self.optimizer = optimizer
         self.m = m
         self.n = n
