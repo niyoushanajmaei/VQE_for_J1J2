@@ -19,10 +19,12 @@ from time import localtime, strftime
 
 
 class DynamicVQERunner:
+
     def __init__(self,  m, n, J1, J2, ansatz_rep = 7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
         self.seed = 50
         self.ansatz = None
         self.initialise_ansatz(ansatz,n*m, ansatz_rep)
+
 
         self.optimizer = optimizer
         self.m = m
@@ -46,8 +48,7 @@ class DynamicVQERunner:
         Runs the VQE algorithm
         # For now, setting add_layers and large_gradient_adds to True simultaneously is not implemented
 
-        :param monitor: if True, the convergence plot is saved
-        :param small_gradient_deletion: if Ture, "alpha" of percent gates with the smallest parameter gradient are
+        :param small_gradient_deletion: if True, "alpha" of percent gates with the smallest parameter gradient are
             removed from that layer
         :param small_gradient_add_to_end: if True, "alpha" percent of gates with the smallest parameter gradient are
             added removed and added to the end of the ansatz instead
@@ -77,6 +78,7 @@ class DynamicVQERunner:
             step_iter = min(step_iter, self.totalMaxIter)
         else:
             raise SimultaneousGradientAndLayer
+
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -114,13 +116,20 @@ class DynamicVQERunner:
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
+
             if large_gradient_add:
                 # do modifications?
                 # still have initial theta at this stage, can process finalTheta and initialTheta
-                if initialTheta:
-                    pass
-                initialTheta = finalTheta
                 self.ansatz.update_parameters(finalTheta)
+                if initialTheta:
+                    paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                    mx = np.max(paramGrad)
+                    assert mx   # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    # print(paramGrad)
+                    paramGrad = paramGrad/mx
+                    # print(paramGrad)
+                # MODIFY ANSATZ!!
+                initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
                 # change both the ansatz and the theta accordingly
                 self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)

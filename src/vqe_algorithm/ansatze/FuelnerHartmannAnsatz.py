@@ -19,13 +19,16 @@ class FuelnerHartmannAnsatz(Ansatz):
     def __str__(self):
         return f"FuelnerHartmann-{len(self.theta)} params"
 
+    def __str__(self):
+        return f"FeulnerHartmann-{len(self.theta)} params"
+
     def _get_ansatz_w(self, N, reps):
         """
         Wrapper class for _get_ansatz
 
         :param N: size of the lattice
         """
-        return self._get_ansatz(N,reps)
+        return self._get_ansatz(N, reps)
 
     @staticmethod
     def XXYYZZ(theta_i):
@@ -94,13 +97,14 @@ class FuelnerHartmannAnsatz(Ansatz):
         """
         should return a list of parameters of the ansatz
         """
-        pass
+        return self.theta
 
     def update_parameters(self, new_parameters):
         """
         Should update the ansatz using the given new parameters
         """
         self.theta = new_parameters
+
 
     def add_fresh_parameter_layer(self, current_params: list) -> list:
         """
