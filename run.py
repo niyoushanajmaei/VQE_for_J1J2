@@ -75,8 +75,8 @@ def testDynamicRunner():
     start = time.time()
     seed = 50
     # ansatz in {"TwoLocal", "FuelnerHartmann"}
-    ansatz = "FuelnerHartmann"
-    layers = 7
+    ansatz = "TwoLocal"
+    layers = 17
     # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
     optimizer = "SLSQP"
 
