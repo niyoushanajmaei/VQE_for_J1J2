@@ -75,6 +75,7 @@ def testDynamicRunner():
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "TwoLocal"
+    layers = 5
     # optimizer in {"SLSQP", "SPSA", "ADAM", "COBYLA"}
     optimizer = "SLSQP"
 
@@ -83,7 +84,7 @@ def testDynamicRunner():
     J1 = 1
     J2 = 0.5
 
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
     result = vqe_runner.run_dynamic_vqe()
 
     print(result)
@@ -144,7 +145,7 @@ def check_local_minima_hypothesis():
 
     with open(f"graphs/results_TL_open_{layers}", "w") as f:
         for e in optimal_values:
-            f.write(e)
+            f.write(f"{e}")
         f.write(f"minimum achieved: {min(optimal_values)}")
 
 
