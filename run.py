@@ -81,7 +81,7 @@ def testDynamicRunner():
     optimizer = "SLSQP"
 
     m = 3
-    n = 3
+    n = 4
     J1 = 1
     J2 = 0.5
 
