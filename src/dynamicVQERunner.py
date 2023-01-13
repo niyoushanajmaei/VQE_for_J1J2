@@ -139,14 +139,15 @@ class DynamicVQERunner:
                     self.ansatz.add_large_gradient_gate_end(paramGrad)
                 initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
-                # change both the ansatz and the theta accordingly
-                self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
-                ansatz = self.ansatz.circuit
-                finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
-                self.ansatz.update_parameters(finalTheta)
-                print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
-                      f" {len(finalTheta)}")
-                initialTheta = finalTheta
+                if i+step_iter < self.totalMaxIter:
+                    # change both the ansatz and the theta accordingly
+                    self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
+                    ansatz = self.ansatz.circuit
+                    finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
+                    self.ansatz.update_parameters(finalTheta)
+                    print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
+                          f" {len(finalTheta)}")
+                    initialTheta = finalTheta
 
         self.ansatz.update_parameters(finalTheta)
         # save convergence plot for the run
