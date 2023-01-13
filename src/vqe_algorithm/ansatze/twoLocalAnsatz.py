@@ -26,6 +26,16 @@ class TwoLocalAnsatz(Ansatz):
             returns Qiskit's twolocal circuit for N qubits
         """
         twoLocalAnsatz = TwoLocal(N, *rotation_blocks, *entanglement_blocks, entanglement, reps, insert_barriers=True)
+        countParamGates = 0  #count the number of gates with parameters
+        # needed when dynamicVQERunner calls to include a particular gate again due to a large gradient or so
+        for gate in twoLocalAnsatz.data:
+            if (gate[0].params):
+                print('\ngate name:', gate[0].name)
+                print('qubit(s) acted on:', gate[1])
+                print('other parameters (such as angles):', gate[0].params)
+                countParamGates+=1
+        print(countParamGates)
+        # print(numParams)
         return twoLocalAnsatz
 
     def _get_ansatz_w(self, N, reps):

@@ -7,7 +7,7 @@ from qiskit.algorithms import VQE
 from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM
 from qiskit.circuit.library import TwoLocal
 
-from src.vqe_algorithm.ansatze.FuelnerHartmannAnsatz import FuelnerHartmannAnsatz
+from src.vqe_algorithm.ansatze.FeulnerHartmannAnsatz import FeulnerHartmannAnsatz
 from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 from src.model import Model
 
@@ -33,7 +33,7 @@ class VQERunner:
         """
         self.seed = seed
         if ansatz == "FeulnerHartmann":
-            self.ansatz = FuelnerHartmannAnsatz(m*n, ansatz_rep)
+            self.ansatz = FeulnerHartmannAnsatz(m*n, ansatz_rep)
         elif ansatz == "TwoLocal":
             self.ansatz = TwoLocalAnsatz(m*n, ansatz_rep)
         else:
@@ -153,7 +153,7 @@ class VQERunner:
 
         """
         twolocal = TwoLocalAnsatz(self.N)
-        fuelner = FuelnerHartmannAnsatz(self.N)
+        feulner = FeulnerHartmannAnsatz(self.N)
         ansatze = {"twoLocal": twolocal.circuit}
         optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=1000), ADAM(maxiter=1000, amsgrad=True, lr=0.009)]
 
@@ -189,7 +189,7 @@ class VQERunner:
 
     def tune_lr_iter_for_optimizer(self):
         twolocal = TwoLocalAnsatz(self.N)
-        fuelner = FuelnerHartmannAnsatz(self.N)
+        feulner = FeulnerHartmannAnsatz(self.N)
         ansatz = twolocal.circuit
 
         seed = self.seed
