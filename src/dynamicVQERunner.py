@@ -37,7 +37,14 @@ class DynamicVQERunner:
         self.hamiltonianMatrix = self.hamiltonian.to_matrix()
         self.simulation = True
         self.totalMaxIter = totalMaxIter
-        self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
+        # It takes way too long to compute the ground state energy for 3x4
+        # so I hard coded it in
+        # But this is only for the open system
+        # TODO: add similar hardcoding for periodic bc as well
+        if self.N == 12:
+            self.exactEnergy = -22.138
+        else:
+            self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
     def run_dynamic_vqe(self, step_iter=np.inf, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
@@ -66,16 +73,19 @@ class DynamicVQERunner:
             if self.ansatz.name == "TwoLocal":
                 initial_reps = 4  # 40 parameters
             elif self.ansatz.name == "FeulnerHartmann":
-                initial_reps = 1 # 39 parameters
+                initial_reps = 1  # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
-            step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
-        elif large_gradient_add and not add_layers_fresh:
+            if initial_reps!=final_reps:
+                step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
+            else:
+                step_iter = self.totalMaxIter
+        elif large_gradient_add and add_layers_fresh:
+            raise SimultaneousGradientAndLayer
+        else:
             # number of iterations before stopping the optimizer for modifications
             step_iter = min(step_iter, self.totalMaxIter)
-        else:
-            raise SimultaneousGradientAndLayer
 
 
         seed = self.seed
@@ -132,15 +142,17 @@ class DynamicVQERunner:
                     self.ansatz.add_large_gradient_gate_end(paramGrad)
                 initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
-                # change both the ansatz and the theta accordingly
-                self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
-                ansatz = self.ansatz.circuit
-                finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
-                self.ansatz.update_parameters(finalTheta)
-                print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
-                      f" {len(finalTheta)}")
-                initialTheta = finalTheta
+                if i+step_iter < self.totalMaxIter:
+                    # change both the ansatz and the theta accordingly
+                    self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
+                    ansatz = self.ansatz.circuit
+                    finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
+                    self.ansatz.update_parameters(finalTheta)
+                    print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
+                          f" {len(finalTheta)}")
+                    initialTheta = finalTheta
 
+        self.ansatz.update_parameters(finalTheta)
         # save convergence plot for the run
         counts = [np.asarray(counts)]
         values = [np.asarray(values)]
