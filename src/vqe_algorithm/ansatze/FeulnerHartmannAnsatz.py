@@ -60,6 +60,7 @@ class FeulnerHartmannAnsatz(Ansatz):
         """
         if N == 9:
             numParams = 18 + 21*reps
+            self.initialNumParams = numParams
             theta = ParameterVector('theta', numParams)
             indParam = 0
             # describe sets of gates:
@@ -94,6 +95,7 @@ class FeulnerHartmannAnsatz(Ansatz):
 
         elif N == 12:
             numParams = 24 + 29*reps
+            self.initialNumParams = numParams
             theta = ParameterVector('theta', numParams)
             indParam = 0
             # describe sets of gates:
@@ -168,8 +170,8 @@ class FeulnerHartmannAnsatz(Ansatz):
             if (gate[0].params):
                 parammedGateIndex+=1
                 if (parammedGateIndex == indexOfMax):
-                    newParam = Parameter(f"theta[{len(theta)}]")
-                    theta.append(0)
+                    newParam = Parameter(f"a[{len(theta)-self.initialNumParams}]")
+                    theta.insert(len(theta)-self.initialNumParams, 0.0)
                     match gate[0].name:
                         case "rx":
                             qc.rx(newParam, gate[1])
