@@ -58,6 +58,7 @@ class FeulnerHartmannAnsatz(Ansatz):
             indParam: indicates how many parameters have been used up so far
         """
         numParams = 18 + 21*reps
+        self.initialNumParams = numParams
         theta = ParameterVector('theta', numParams)
         indParam = 0
         # describe sets of gates:
@@ -129,8 +130,8 @@ class FeulnerHartmannAnsatz(Ansatz):
             if (gate[0].params):
                 parammedGateIndex+=1
                 if (parammedGateIndex == indexOfMax):
-                    newParam = Parameter(f"a[{len(theta)}]")
-                    theta.insert(0, 0.0)
+                    newParam = Parameter(f"a[{len(theta)-self.initialNumParams}]")
+                    theta.insert(len(theta)-self.initialNumParams, 0.0)
                     match gate[0].name:
                         case "rx":
                             qc.rx(newParam, gate[1])
