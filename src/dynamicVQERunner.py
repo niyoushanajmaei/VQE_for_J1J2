@@ -12,8 +12,6 @@ from src.vqe_algorithm.ansatze.twoLocalAnsatz import TwoLocalAnsatz
 
 from time import localtime, strftime
 
-from qiskit.circuit import Parameter
-
 # TODO:
 # - add offsets to the ansatz modifiers, to prevent them from running together?
 #       But this would require stopping the optimizer more often...
@@ -114,20 +112,25 @@ class DynamicVQERunner:
             # print(initialTheta)
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
                       quantum_instance=qi, include_custom=True)
-            if initialTheta is not None:
+            if initialTheta:
                 print("estimate after ansatz modification:", vqe.get_energy_evaluation(operator=self.hamiltonian)(initialTheta))
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
-            finalTheta = result.optimal_point
+            finalTheta = result.optimal_point.tolist()
+
             if large_gradient_add:
                 # do modifications?
                 # still have initial theta at this stage, can process finalTheta and initialTheta
                 self.ansatz.update_parameters(finalTheta)
-                newParam = Parameter(f"a{len(finalTheta)}")
-                finalTheta = np.append(np.zeros(1), finalTheta)
-                self.ansatz.circuit.rx(newParam, [0])
-                ansatz = self.ansatz.circuit
-                initialTheta = finalTheta
+                if initialTheta:
+                    paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                    mx = np.max(paramGrad)
+                    assert mx  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    # print(paramGrad)
+                    paramGrad = paramGrad / mx
+                    # print(paramGrad)
+                    self.ansatz.add_large_gradient_gate_end(paramGrad)
+                initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
                 # change both the ansatz and the theta accordingly
                 self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)

@@ -129,9 +129,8 @@ class FeulnerHartmannAnsatz(Ansatz):
             if (gate[0].params):
                 parammedGateIndex+=1
                 if (parammedGateIndex == indexOfMax):
-                    newParam = Parameter(f"theta[{len(theta)}]")
-                    # theta.append(0.0)
-                    theta.extend(list(np.zeros(1)))
+                    newParam = Parameter(f"a[{len(theta)}]")
+                    theta.insert(0, 0.0)
                     qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), [0,1])
                     # match gate[0].name:
                     #     case "rx":
