@@ -131,16 +131,15 @@ class FeulnerHartmannAnsatz(Ansatz):
                 if (parammedGateIndex == indexOfMax):
                     newParam = Parameter(f"a[{len(theta)}]")
                     theta.insert(0, 0.0)
-                    qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), [0,1])
-                    # match gate[0].name:
-                    #     case "rx":
-                    #         qc.rx(newParam, gate[1])
-                    #     case "ry":
-                    #         qc.ry(newParam, gate[1])
-                    #     case "rz":
-                    #         qc.rz(newParam, gate[1])
-                    #     case _:
-                    #         qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
+                    match gate[0].name:
+                        case "rx":
+                            qc.rx(newParam, gate[1])
+                        case "ry":
+                            qc.ry(newParam, gate[1])
+                        case "rz":
+                            qc.rz(newParam, gate[1])
+                        case _:
+                            qc.append(FeulnerHartmannAnsatz.XXYYZZ(newParam), gate[1])
 
                     qc.draw(output='mpl', filename=f"{len(theta)}")
                     self.circuit = qc

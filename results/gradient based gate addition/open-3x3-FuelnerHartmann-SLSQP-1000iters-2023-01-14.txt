@@ -1,0 +1,8 @@
+Using SLSQP optimizer with 1000 total iterations, stopping every 100 iterations for modifications
+iteration 100/1000: current estimate: -15.614624249609514
+estimate after ansatz modification: -15.614624249609514
+iteration 200/1000: current estimate: -15.72461217023072
+estimate after ansatz modification: -15.72461217023072
+iteration 300/1000: current estimate: -15.743000354710354
+estimate after ansatz modification: -15.501319494926035
+
