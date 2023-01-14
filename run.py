@@ -75,10 +75,10 @@ def testDynamicRunner():
     start = time.time()
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
-    ansatz = "FeulnerHartmann"
-    layers = 7
+    ansatz = "TwoLocal"
+    layers = 18
     # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
-    optimizer = "AMSGRAD"
+    optimizer = "SLSQP"
 
     m = 3
     n = 4
@@ -113,10 +113,10 @@ def tune_number_of_layers_for_adam():
 def check_local_minima_hypothesis():
     # Running the TwoLocal Ansatz with random seeds
 
-    layers = 10
+    layers = 18
     ansatz = "TwoLocal"
     optimal_values = []
-    num = 100
+    num = 50
     num_bins = 20
 
     for i in range(num):
@@ -124,17 +124,20 @@ def check_local_minima_hypothesis():
             print(f"running for iter {i}")
         seed = np.random.randint(100*num, size=1)[0]
 
+        # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
+        optimizer = "SLSQP"
+
         m = 3
-        n = 3
+        n = 4
         J1 = 1
         J2 = 0.5
 
         # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
 
-        vqe_runner = VQERunner(m, n, J1, J2, h=0, periodic_hamiltonian=False, simulation=True, seed=seed, ansatz=ansatz,
-                               optimizer="SLSQP", ansatz_rep=layers)
-        result = vqe_runner.runVQE(monitor=True)
-
+        vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz,
+                                      optimizer=optimizer, totalMaxIter=1000)
+        # result = vqe_runner.run_dynamic_vqe(step_iter=10 ,large_gradient_add=True)
+        result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
         optimal_values.append(result.optimal_value)
 
     print(optimal_values)
@@ -144,9 +147,9 @@ def check_local_minima_hypothesis():
     plt.hist(optimal_values, bins=num_bins, color='green')
 
     plt.title(f'Distribution of results for running the {ansatz} ansatz with {layers} layers, {num} times.')
-    plt.savefig(f"graphs/distribution_TL_open_{layers}")
+    plt.savefig(f"results/local_minima/3x4/dynamic/dynamic_distribution_TL_open_{layers}")
 
-    with open(f"graphs/results_TL_open_{layers}", "w") as f:
+    with open(f"results/local_minima/3x4/dynamic/dynamic_results_TL_open_{layers}", "w") as f:
         for e in optimal_values:
             f.write(f"{e}")
         f.write(f"minimum achieved: {min(optimal_values)}")
@@ -156,5 +159,5 @@ def check_local_minima_hypothesis():
 if __name__ == "__main__":
     # tune_adam()
     # test_compare_ansatze()
-    testDynamicRunner()
-    #check_local_minima_hypothesis()
+    #testDynamicRunner()
+    check_local_minima_hypothesis()

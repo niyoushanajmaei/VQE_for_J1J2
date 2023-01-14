@@ -73,11 +73,14 @@ class DynamicVQERunner:
             if self.ansatz.name == "TwoLocal":
                 initial_reps = 4  # 40 parameters
             elif self.ansatz.name == "FeulnerHartmann":
-                initial_reps = 1 # 39 parameters
+                initial_reps = 1  # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
-            step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
+            if initial_reps!=final_reps:
+                step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
+            else:
+                step_iter = self.totalMaxIter
         elif large_gradient_add and add_layers_fresh:
             raise SimultaneousGradientAndLayer
         else:
