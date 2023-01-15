@@ -144,10 +144,14 @@ class DynamicVQERunner:
             if add_layers_fresh:
                 if i+step_iter < self.totalMaxIter:
                     # change both the ansatz and the theta accordingly
+                    self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/after_run_{len(finalTheta)}")
+                    print(f"final theta: {finalTheta}")
                     self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
                     ansatz = self.ansatz.circuit
                     finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
                     self.ansatz.update_parameters(finalTheta)
+                    print(f"updated final theta: {finalTheta}")
+                    self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
                     print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                           f" {len(finalTheta)}")
                     initialTheta = finalTheta
