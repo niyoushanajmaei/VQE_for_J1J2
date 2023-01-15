@@ -113,7 +113,7 @@ def tune_number_of_layers_for_adam():
 def check_local_minima_hypothesis():
     # Running the TwoLocal Ansatz with random seeds
 
-    layers = 18
+    layers = 17
     ansatz = "TwoLocal"
     optimal_values = []
     num = 50
@@ -128,7 +128,7 @@ def check_local_minima_hypothesis():
         optimizer = "SLSQP"
 
         m = 3
-        n = 4
+        n = 3
         J1 = 1
         J2 = 0.5
 
@@ -140,6 +140,9 @@ def check_local_minima_hypothesis():
         result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
         optimal_values.append(result.optimal_value)
 
+        with open(f"results/local_minima/3x3/dynamic/dynamic_results_TL_open_{layers}", "a") as f:
+            f.write(f"{result.optimal_value}, ")
+
     print(optimal_values)
     print(f"minimum: {min(optimal_values)}")
 
@@ -147,12 +150,13 @@ def check_local_minima_hypothesis():
     plt.hist(optimal_values, bins=num_bins, color='green')
 
     plt.title(f'Distribution of results for running the {ansatz} ansatz with {layers} layers, {num} times.')
-    plt.savefig(f"results/local_minima/3x4/dynamic/dynamic_distribution_TL_open_{layers}")
+    plt.savefig(f"results/local_minima/3x3/dynamic/dynamic_distribution_TL_open_{layers}")
 
-    with open(f"results/local_minima/3x4/dynamic/dynamic_results_TL_open_{layers}", "w") as f:
+    with open(f"results/local_minima/3x3/dynamic/dynamic_results_TL_open_{layers}", "a") as f:
+        f.write(f"optimal values: ")
         for e in optimal_values:
-            f.write(f"{e}")
-        f.write(f"minimum achieved: {min(optimal_values)}")
+            f.write(f"{e}, ")
+        f.write(f"\nminimum achieved: {min(optimal_values)}")
 
 
 

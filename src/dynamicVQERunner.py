@@ -77,7 +77,7 @@ class DynamicVQERunner:
             else:
                 raise UnidentifiedAnsatzError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
-            if initial_reps!=final_reps:
+            if initial_reps != final_reps:
                 step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
             else:
                 step_iter = self.totalMaxIter
