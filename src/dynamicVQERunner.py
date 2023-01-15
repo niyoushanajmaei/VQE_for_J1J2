@@ -20,8 +20,8 @@ from time import localtime, strftime
 
 class DynamicVQERunner:
 
-    def __init__(self,  m, n, J1, J2, ansatz_rep = 7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
-        self.seed = 50
+    def __init__(self,  m, n, J1, J2, seed=50, ansatz_rep=7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
+        self.seed = seed
         self.ansatz = None
         self.initialise_ansatz(ansatz,n*m, ansatz_rep)
         self.optimizer = optimizer
@@ -87,8 +87,8 @@ class DynamicVQERunner:
             # number of iterations before stopping the optimizer for modifications
             step_iter = min(step_iter, self.totalMaxIter)
 
-
         seed = self.seed
+        print(f"Running with seed: {seed}")
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(VQERunner.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
