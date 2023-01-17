@@ -76,7 +76,7 @@ def testDynamicRunner():
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "FeulnerHartmann"
-    layers = 2
+    layers = 1
     # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
     optimizer = "SLSQP"
 
@@ -86,7 +86,7 @@ def testDynamicRunner():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
-    result = vqe_runner.run_dynamic_vqe(step_iter=100 ,large_gradient_add=True)
+    result = vqe_runner.run_dynamic_vqe(step_iter=50 ,large_gradient_add=True)
     # result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
     print(result)
 
