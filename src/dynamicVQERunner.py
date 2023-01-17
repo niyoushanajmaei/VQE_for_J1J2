@@ -186,6 +186,7 @@ class DynamicVQERunner:
         optimizers = [self.optimizer]
         fileName = f"{self.periodicity}-{self.m}x{self.n}-{self.ansatz}-{self.optimizer}-{self.totalMaxIter}iters"
         self.plotConvergences(counts, values, optimizers, fileName=fileName)
+        self.ansatz.circuit.draw(output='mpl', filename=f"{len(finalTheta)}")
 
         return result
 
