@@ -139,6 +139,7 @@ class DynamicVQERunner:
                         paramGrad = paramGrad / mx
                         self.ansatz.add_large_gradient_gate_end(paramGrad)
                     else:
+                        print("randomizing a parameter")
                         finalTheta = self.randomized_parameters(finalTheta, 1)
                         self.ansatz.update_parameters(finalTheta)
                 initialTheta = self.ansatz.get_parameters()
@@ -175,7 +176,7 @@ class DynamicVQERunner:
     def randomized_parameters(currParams, numModifications):
         newParams = currParams.copy()
         for i in np.random.randint(0, len(newParams), numModifications):
-            newParams[i] = newParams[i] * (np.random.random()*4-2)
+            newParams[i] = newParams[i] * (np.random.random()*2-1)
         return newParams
 
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
