@@ -187,6 +187,7 @@ class FeulnerHartmannAnsatz(Ansatz):
                 if (parammedGateIndex == indexOfMax):
                     newInd = len(theta) - self.initialNumParams
                     prefix = "z" * (int(newInd / 10) + 1)
+
                     newParam = Parameter(f"{prefix}[{newInd}]")
                     theta.append(0.0)
                     match gate[0].name:

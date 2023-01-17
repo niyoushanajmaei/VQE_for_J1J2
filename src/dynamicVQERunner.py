@@ -203,6 +203,13 @@ class DynamicVQERunner:
         else:
             raise UnidentifiedAnsatzError
 
+    @staticmethod
+    def randomized_parameters(currParams, numModifications):
+        newParams = currParams.copy()
+        for i in np.random.randint(0, len(newParams), numModifications):
+            newParams[i] = newParams[i] * (np.random.random()*2-1)
+        return newParams
+
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
         """
         plots the convergence plots for a list of counts and values
