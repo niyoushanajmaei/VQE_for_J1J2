@@ -135,11 +135,12 @@ class DynamicVQERunner:
                 if initialTheta:
                     paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
                     mx = np.max(paramGrad)
-                    assert mx  # make sure it isn't zero, since we will be using it to normalize paramGrad
-                    # print(paramGrad)
-                    paramGrad = paramGrad / mx
-                    # print(paramGrad)
-                    self.ansatz.add_large_gradient_gate_end(paramGrad)
+                    if mx:  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                        paramGrad = paramGrad / mx
+                        self.ansatz.add_large_gradient_gate_end(paramGrad)
+                    else:
+                        finalTheta = self.randomized_parameters(finalTheta, 1)
+                        self.ansatz.update_parameters(finalTheta)
                 initialTheta = self.ansatz.get_parameters()
             if add_layers_fresh:
                 if i+step_iter < self.totalMaxIter:
@@ -169,6 +170,13 @@ class DynamicVQERunner:
             self.ansatz = TwoLocalAnsatz(N, reps)
         else:
             raise UnidentifiedAnsatzError
+
+    @staticmethod
+    def randomized_parameters(currParams, numModifications):
+        newParams = currParams.copy()
+        for i in np.random.randint(0, len(newParams), numModifications):
+            newParams[i] = newParams[i] * (np.random.random()*2-1)
+        return currParams
 
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
         """
