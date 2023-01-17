@@ -42,7 +42,7 @@ class DynamicVQERunner:
         # But this is only for the open system
         # TODO: add similar hardcoding for periodic bc as well
         if self.N == 12:
-            self.exactEnergy = -22.138
+            self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
         else:
             self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
