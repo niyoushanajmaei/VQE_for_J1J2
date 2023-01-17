@@ -83,6 +83,8 @@ class DynamicVQERunner:
                 step_iter = self.totalMaxIter
         elif large_gradient_add and add_layers_fresh:
             raise SimultaneousGradientAndLayer
+        elif small_gradient_deletion and add_layers_fresh:
+            raise SimultaneousGradientAndLayer
         else:
             # number of iterations before stopping the optimizer for modifications
             step_iter = min(step_iter, self.totalMaxIter)
@@ -118,16 +120,18 @@ class DynamicVQERunner:
             values.append(mean)
             # print(f"Current Estimated Energy: {mean}")
 
+        randomised_in_last_step = False
         for i in range(0, self.totalMaxIter, step_iter):
             # print(initialTheta)
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
                       quantum_instance=qi, include_custom=True)
-            if initialTheta:
+            if initialTheta and not randomised_in_last_step:
                 print("estimate after ansatz modification:", vqe.get_energy_evaluation(operator=self.hamiltonian)(initialTheta))
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
 
+            randomised_in_last_step = False
             if large_gradient_add:
                 # do modifications?
                 # still have initial theta at this stage, can process finalTheta and initialTheta
@@ -135,12 +139,16 @@ class DynamicVQERunner:
                 if initialTheta:
                     paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
                     mx = np.max(paramGrad)
-                    assert mx  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    if mx:  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                        paramGrad = paramGrad / mx
+                        self.ansatz.add_large_gradient_gate_end(paramGrad, beta=0.2)
+                    else:
+                        finalTheta = self.randomized_parameters(finalTheta, 1)
+                        self.ansatz.update_parameters(finalTheta)
+                        randomised_in_last_step = True
                     # print(paramGrad)
-                    paramGrad = paramGrad / mx
-                    # print(paramGrad)
-                    self.ansatz.add_large_gradient_gate_end(paramGrad)
                 initialTheta = self.ansatz.get_parameters()
+                print(f"Current number of parameters: {len(initialTheta)}")
             if add_layers_fresh:
                 if i+step_iter < self.totalMaxIter:
                     # change both the ansatz and the theta accordingly
@@ -155,6 +163,20 @@ class DynamicVQERunner:
                     #print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                     #      f" {len(finalTheta)}")
                     initialTheta = finalTheta
+            if small_gradient_deletion:
+                self.ansatz.update_parameters(finalTheta)
+                if initialTheta:
+                    param_grad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                    max_grad = np.max(param_grad)
+                    try:
+                        # print(paramGrad)
+                        param_grad = param_grad / max_grad
+                        # print(paramGrad)
+                        self.ansatz.delete_small_gradient_gate(param_grad)
+                        print()
+                    except(ZeroDivisionError):
+                        print(f"Encountered division by zero at iter {i+step_iter}. Did not delete any gates.")
+                initialTheta = self.ansatz.get_parameters()
 
         self.ansatz.update_parameters(finalTheta)
         # save convergence plot for the run
@@ -165,6 +187,13 @@ class DynamicVQERunner:
         self.plotConvergences(counts, values, optimizers, fileName=fileName)
 
         return result
+
+    @staticmethod
+    def randomized_parameters(currParams, numModifications):
+        newParams = currParams.copy()
+        for i in np.random.randint(0, len(newParams), numModifications):
+            newParams[i] = newParams[i] * (np.random.random() * 4 - 2)
+        return newParams
 
     def initialise_ansatz(self, name, N, reps):
         if name == "FeulnerHartmann":
