@@ -175,7 +175,7 @@ class DynamicVQERunner:
     def randomized_parameters(currParams, numModifications):
         newParams = currParams.copy()
         for i in np.random.randint(0, len(newParams), numModifications):
-            newParams[i] = newParams[i] * (np.random.random()*2-1)
+            newParams[i] = newParams[i] * (np.random.random()*4-2)
         return newParams
 
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
