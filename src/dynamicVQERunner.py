@@ -20,8 +20,8 @@ from time import localtime, strftime
 
 class DynamicVQERunner:
 
-    def __init__(self,  m, n, J1, J2, ansatz_rep = 7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
-        self.seed = 50
+    def __init__(self,  m, n, J1, J2, seed=50, ansatz_rep=7, h=0, periodic_hamiltonian = False, ansatz="TwoLocal", optimizer="SLSQP", totalMaxIter = 1000):
+        self.seed = seed
         self.ansatz = None
         self.initialise_ansatz(ansatz,n*m, ansatz_rep)
         self.optimizer = optimizer
@@ -77,7 +77,7 @@ class DynamicVQERunner:
             else:
                 raise UnidentifiedAnsatzError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
-            if initial_reps!=final_reps:
+            if initial_reps != final_reps:
                 step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
             else:
                 step_iter = self.totalMaxIter
@@ -87,8 +87,8 @@ class DynamicVQERunner:
             # number of iterations before stopping the optimizer for modifications
             step_iter = min(step_iter, self.totalMaxIter)
 
-
         seed = self.seed
+        print(f"Running with seed: {seed}")
         algorithm_globals.random_seed = seed
         qi = QuantumInstance(VQERunner.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
 
@@ -146,12 +146,16 @@ class DynamicVQERunner:
             if add_layers_fresh:
                 if i+step_iter < self.totalMaxIter:
                     # change both the ansatz and the theta accordingly
+                    #self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/after_run_{len(finalTheta)}")
+                    #print(f"final theta: {finalTheta}")
                     self.initialise_ansatz(self.ansatz.name, self.ansatz.N, self.ansatz.reps+1)
                     ansatz = self.ansatz.circuit
                     finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
                     self.ansatz.update_parameters(finalTheta)
-                    print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
-                          f" {len(finalTheta)}")
+                    #print(f"updated final theta: {finalTheta}")
+                    self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
+                    #print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
+                    #      f" {len(finalTheta)}")
                     initialTheta = finalTheta
 
         self.ansatz.update_parameters(finalTheta)
