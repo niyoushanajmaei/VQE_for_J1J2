@@ -46,7 +46,7 @@ class DynamicVQERunner:
         else:
             self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
-    def run_dynamic_vqe(self, step_iter=np.inf, small_gradient_deletion=False, small_gradient_add_to_end=False,
+    def run_dynamic_vqe(self, step_iter=np.inf, gradient_beta=None, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
                         large_gradient_add=False):
         """
@@ -141,7 +141,7 @@ class DynamicVQERunner:
                     mx = np.max(paramGrad)
                     if mx:  # make sure it isn't zero, since we will be using it to normalize paramGrad
                         paramGrad = paramGrad / mx
-                        self.ansatz.add_large_gradient_gate_end(paramGrad, beta=0.2)
+                        self.ansatz.add_large_gradient_gate_end(paramGrad, beta=gradient_beta)
                     else:
                         finalTheta = self.randomized_parameters(finalTheta, 1)
                         self.ansatz.update_parameters(finalTheta)
