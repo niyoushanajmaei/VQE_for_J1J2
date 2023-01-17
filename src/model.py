@@ -216,7 +216,7 @@ class Model:
         # TODO: approximate the eigenvalue for larger systems
         eigenValues = np.sort(np.real(np.linalg.eigvals(hamiltonianMatrix)))
         exactEnergy = eigenValues[0]
-        print(eigenValues)
+        # print(eigenValues)
         return exactEnergy
 
 
