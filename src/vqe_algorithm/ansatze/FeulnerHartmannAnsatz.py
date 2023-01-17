@@ -144,7 +144,7 @@ class FeulnerHartmannAnsatz(Ansatz):
         """
         self.theta = new_parameters
 
-    def add_large_gradient_gate_end(self, paramGrad):
+    def add_large_gradient_gate_end(self, paramGrad, beta=None):
         """
             Given the parameter gradient, selects the gate(s) with largest gradient(s)
             ***TO THE END OF THE CIRCUIT***
@@ -163,15 +163,31 @@ class FeulnerHartmannAnsatz(Ansatz):
         """
         qc = self.circuit
         theta = self.theta
+        if beta is None:
+            indexOfMax = np.argmax(paramGrad)    # to "reach" the gate with highest gradient
+            self.add_gate_to_end(qc, theta, indexOfMax)
+        else:
+            # add beta percent of the initial gates
+            num_adding = beta * self.initialNumParams
+            sorted_indices = (-(np.array(paramGrad))).argsort()  # a sorted copy of paramGrad in descending order
+            #print(f"argmax: {np.argmax(paramGrad)}")
+            #print(sorted_indices)
+            for i in range(int(num_adding)):
+                indexOfMax = sorted_indices[i]  # to "reach" the gate with highest gradient
+                self.add_gate_to_end(qc, theta, indexOfMax)
 
-        indexOfMax = np.argmax(paramGrad)    # to "reach" the gate with highest gradient
+    def add_gate_to_end(self, qc, theta, indexOfMax):
+        """
+            Adds the gate at index indexOfMax to the end of the circuit
+        """
         parammedGateIndex = -1  # index the gates that have parameters
         for gate in qc.data:
             if (gate[0].params):
-                parammedGateIndex+=1
+                parammedGateIndex += 1
                 if (parammedGateIndex == indexOfMax):
-                    newInd = len(theta)-self.initialNumParams
-                    prefix = "z"*(int(newInd/10) + 1)
+                    newInd = len(theta) - self.initialNumParams
+                    prefix = "z" * (int(newInd / 10) + 1)
+
                     newParam = Parameter(f"{prefix}[{newInd}]")
                     theta.append(0.0)
                     match gate[0].name:
@@ -204,3 +220,8 @@ class FeulnerHartmannAnsatz(Ansatz):
         elif self.N == 12:
             current_params.extend(list(np.zeros(29)))
         return current_params
+
+    def delete_small_gradient_gate(self, param_grad):
+        #TODO
+        pass
+
