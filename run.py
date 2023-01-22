@@ -86,8 +86,8 @@ def testDynamicRunner():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=100000)
-    result = vqe_runner.run_dynamic_vqe(step_iter=np.inf, large_gradient_add=True, gradient_beta=0.1) # pass gradient_beta=None for adding one gate
-    #result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
+    # result = vqe_runner.run_dynamic_vqe(step_iter=np.inf, large_gradient_add=True, gradient_beta=0.1) # pass gradient_beta=None for adding one gate
+    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
 
     print(result)
 
