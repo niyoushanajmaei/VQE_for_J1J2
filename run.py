@@ -116,7 +116,7 @@ def check_local_minima_hypothesis():
     layers = 7
     ansatz = "FeulnerHartmann"
     optimal_values = []
-    num = 20
+    num = 10
     num_bins = 20
 
     for i in range(num):
@@ -174,7 +174,7 @@ def interrupt_with_no_mod_test():
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False,
                                   ansatz=ansatz, optimizer=optimizer, totalMaxIter=50000)
-    result = vqe_runner.run_interrupt_test(step_iter=500, random_restart=True)
+    result = vqe_runner.run_interrupt_test(step_iter=5000, random_restart=False)
     print(result)
 
     print(f"The algorithm took {time.time() - start:.2f}s")
