@@ -1,0 +1,8 @@
+Results when interrupting the algorithm but not doing any modifications during the interrupts:
+
+   'optimal_value': -19.636057212279574,
+    'optimizer_evals': None,
+    'optimizer_result': None,
+    'optimizer_time': 16.82418203353882}
+The algorithm took 1730.49s
+exactResult: -22.138
