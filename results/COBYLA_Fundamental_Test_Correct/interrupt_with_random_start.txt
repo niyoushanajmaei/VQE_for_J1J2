@@ -1,0 +1,6 @@
+    'optimal_value': -15.673065123622985,
+    'optimizer_evals': None,
+    'optimizer_result': None,
+    'optimizer_time': 156.0557520389557}
+The algorithm took 1836.47s
+exactResult: -22.138

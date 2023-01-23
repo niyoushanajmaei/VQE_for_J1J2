@@ -122,7 +122,7 @@ def check_local_minima_hypothesis():
 
     for i in range(num):
         print(f"running for iter {i}")
-        seed = np.random.randint(100*num, size=1)[0]+2000
+        seed = np.random.randint(100*num, size=1)[0]
 
         # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
         optimizer = "COBYLA"
@@ -175,7 +175,7 @@ def interrupt_with_no_mod_test():
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False,
                                   ansatz=ansatz, optimizer=optimizer, totalMaxIter=50000)
-    result = vqe_runner.run_interrupt_test(step_iter=500, random_restart=True)
+    result = vqe_runner.run_interrupt_test(step_iter=5000, random_restart=False)
     print(result)
 
     print(f"The algorithm took {time.time() - start:.2f}s")
