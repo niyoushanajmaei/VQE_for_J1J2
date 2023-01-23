@@ -117,32 +117,31 @@ def check_local_minima_hypothesis():
     layers = 7
     ansatz = "FeulnerHartmann"
     optimal_values = []
-    num = 50
+    num = 20
     num_bins = 20
 
     for i in range(num):
-        if i % 10 == 0:
-            print(f"running for iter {i}")
+        print(f"running for iter {i}")
         seed = np.random.randint(100*num, size=1)[0]
 
         # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
-        optimizer = "SLSQP"
+        optimizer = "COBYLA"
 
         m = 3
         n = 4
         J1 = 1
         J2 = 0.5
 
-        # print(Model.getHamiltonian_J1J2_2D(m,n,J1,J2))
-
         vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz,
-                                      optimizer=optimizer, totalMaxIter=1000)
+                                      optimizer=optimizer, totalMaxIter=50000)
         # result = vqe_runner.run_dynamic_vqe(step_iter=10 ,large_gradient_add=True)
         result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
         optimal_values.append(result.optimal_value)
 
-        with open(f"results/local_minima/3x4/dynamic/dynamic_results_TL_open_{layers}", "a") as f:
-            f.write(f"{result.optimal_value}, ")
+        with open(f"results/COBYLA_layer_adding/dynamic_results_TL_open_{layers}", "a") as f:
+            f.write(f"{seed},{result.optimal_value},\n")
+
+        plt.close()
 
     print(optimal_values)
     print(f"minimum: {min(optimal_values)}")
@@ -151,9 +150,9 @@ def check_local_minima_hypothesis():
     plt.hist(optimal_values, bins=num_bins, color='green')
 
     plt.title(f'Distribution of results for running the {ansatz} ansatz with {layers} layers, {num} times.')
-    plt.savefig(f"results/local_minima/3x4/dynamic/dynamic_distribution_TL_open_{layers}")
+    plt.savefig(f"results/COBYLA_layer_adding/dynamic_distribution_TL_open_{layers}")
 
-    with open(f"results/local_minima/3x4/dynamic/dynamic_results_TL_open_{layers}", "a") as f:
+    with open(f"results/COBYLA_layer_adding/dynamic_results_TL_open_{layers}", "a") as f:
         f.write(f"optimal values: ")
         for e in optimal_values:
             f.write(f"{e}, ")
@@ -164,5 +163,5 @@ def check_local_minima_hypothesis():
 if __name__ == "__main__":
     # tune_adam()
     # test_compare_ansatze()
-    testDynamicRunner()
-    #check_local_minima_hypothesis()
+    # testDynamicRunner()
+    check_local_minima_hypothesis()
