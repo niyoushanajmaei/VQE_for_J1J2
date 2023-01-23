@@ -163,5 +163,5 @@ def check_local_minima_hypothesis():
 if __name__ == "__main__":
     # tune_adam()
     # test_compare_ansatze()
-    # testDynamicRunner()
-    check_local_minima_hypothesis()
+    testDynamicRunner()
+    # check_local_minima_hypothesis()
