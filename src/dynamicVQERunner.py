@@ -72,7 +72,7 @@ class DynamicVQERunner:
         # number of iterations before adding a layer to the ansatz
         if add_layers_fresh and not large_gradient_add:
             if self.ansatz.name == "TwoLocal":
-                initial_reps = 4  # 40 parameters
+                initial_reps = 18  # 40 parameters
             elif self.ansatz.name == "FeulnerHartmann":
                 initial_reps = 7  # 39 parameters
             else:
