@@ -76,18 +76,18 @@ def testDynamicRunner():
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "FeulnerHartmann"
-    layers = 7
+    layers = 4
     # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
-    optimizer = "COBYLA"
+    optimizer = "SLSQP"
 
     m = 3
     n = 4
     J1 = 1
     J2 = 0.5
 
-    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=100000)
-    # result = vqe_runner.run_dynamic_vqe(step_iter=np.inf, large_gradient_add=True, gradient_beta=0.1) # pass gradient_beta=None for adding one gate
-    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
+    vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
+    result = vqe_runner.run_dynamic_vqe(step_iter=np.inf, large_gradient_add=True, gradient_beta=0.1) # pass gradient_beta=None for adding one gate
+    # result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
 
     print(result)
 
@@ -186,7 +186,6 @@ def interrupt_with_no_mod_test():
 if __name__ == "__main__":
     # tune_adam()
     # test_compare_ansatze()
-    #testDynamicRunner()
-    #check_local_minima_hypothesis()
-    check_local_minima_hypothesis()
+    testDynamicRunner()
+    # check_local_minima_hypothesis()
     # interrupt_with_no_mod_test()
