@@ -109,6 +109,9 @@ class DynamicVQERunner:
             opt = ADAM(maxiter=step_iter, lr=lr, amsgrad=True)
         elif self.optimizer == "COBYLA":
             opt = COBYLA(maxiter=step_iter, tol=1e-6)
+            print(opt.is_initial_point_ignored)
+            print(opt.is_initial_point_supported)
+            quit()
         else:
             raise InvalidOptimizerError
         print(f"Using {self.optimizer} optimizer with {self.totalMaxIter} total iterations, stopping every {step_iter} iterations for modifications")
@@ -160,7 +163,7 @@ class DynamicVQERunner:
                     finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
                     self.ansatz.update_parameters(finalTheta)
                     #print(f"updated final theta: {finalTheta}")
-                    self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
+                    # self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
                     #print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                     #      f" {len(finalTheta)}")
                     initialTheta = finalTheta
@@ -186,6 +189,7 @@ class DynamicVQERunner:
         optimizers = [self.optimizer]
         fileName = f"{self.periodicity}-{self.m}x{self.n}-{self.ansatz}-{self.optimizer}-{self.totalMaxIter}iters"
         self.plotConvergences(counts, values, optimizers, fileName=fileName)
+        self.ansatz.circuit.draw(output='mpl', filename=f"{len(finalTheta)}")
 
         return result
 

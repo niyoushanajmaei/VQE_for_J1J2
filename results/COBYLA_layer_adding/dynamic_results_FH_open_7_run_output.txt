@@ -1,0 +1,326 @@
+running for iter 0
+Running with seed: 1758
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.491939593438213
+estimate after ansatz modification: -11.491939593438213
+iteration 16666/50000: current estimate: -21.47770585990188
+estimate after ansatz modification: -21.47770585990188
+iteration 24999/50000: current estimate: -21.78507794400238
+estimate after ansatz modification: -21.78507794400238
+iteration 33332/50000: current estimate: -21.985955404170614
+estimate after ansatz modification: -21.985955404170614
+iteration 41665/50000: current estimate: -22.023747481744262
+estimate after ansatz modification: -22.023747481744262
+iteration 49998/50000: current estimate: -22.034430472626244
+estimate after ansatz modification: -22.034430472626244
+iteration 58331/50000: current estimate: -22.04285762504142
+running for iter 1
+Running with seed: 1480
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -10.138848451406647
+estimate after ansatz modification: -10.138848451406647
+iteration 16666/50000: current estimate: -19.466194279229363
+estimate after ansatz modification: -19.466194279229363
+iteration 24999/50000: current estimate: -21.638272106561683
+estimate after ansatz modification: -21.638272106561683
+iteration 33332/50000: current estimate: -21.97799033018815
+estimate after ansatz modification: -21.97799033018815
+iteration 41665/50000: current estimate: -22.007105783487436
+estimate after ansatz modification: -22.007105783487436
+iteration 49998/50000: current estimate: -22.030563912333694
+estimate after ansatz modification: -22.030563912333694
+iteration 58331/50000: current estimate: -22.043051631536475
+running for iter 2
+Running with seed: 213
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.713709812959385
+estimate after ansatz modification: -11.713709812959385
+iteration 16666/50000: current estimate: -19.615685580804765
+estimate after ansatz modification: -19.615685580804765
+iteration 24999/50000: current estimate: -21.505749062233466
+estimate after ansatz modification: -21.505749062233466
+iteration 33332/50000: current estimate: -21.905592600405402
+estimate after ansatz modification: -21.905592600405402
+iteration 41665/50000: current estimate: -21.998182569750654
+estimate after ansatz modification: -21.998182569750654
+iteration 49998/50000: current estimate: -22.035063990063268
+estimate after ansatz modification: -22.035063990063268
+iteration 58331/50000: current estimate: -22.04895012299256
+running for iter 3
+Running with seed: 1460
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.850322085615794
+estimate after ansatz modification: -11.850322085615794
+iteration 16666/50000: current estimate: -19.564644170412247
+estimate after ansatz modification: -19.564644170412247
+iteration 24999/50000: current estimate: -21.665170498723825
+estimate after ansatz modification: -21.665170498723825
+iteration 33332/50000: current estimate: -21.998152662547014
+estimate after ansatz modification: -21.998152662547014
+iteration 41665/50000: current estimate: -22.03223806612654
+estimate after ansatz modification: -22.03223806612654
+iteration 49998/50000: current estimate: -22.040480299252017
+estimate after ansatz modification: -22.040480299252017
+iteration 58331/50000: current estimate: -22.046507969620638
+running for iter 4
+Running with seed: 1269
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.231584053044637
+estimate after ansatz modification: -11.231584053044637
+iteration 16666/50000: current estimate: -21.60095388799298
+estimate after ansatz modification: -21.60095388799298
+iteration 24999/50000: current estimate: -21.871699468093176
+estimate after ansatz modification: -21.871699468093176
+iteration 33332/50000: current estimate: -22.01128196333112
+estimate after ansatz modification: -22.01128196333112
+iteration 41665/50000: current estimate: -22.041171842265015
+estimate after ansatz modification: -22.041171842265015
+iteration 49998/50000: current estimate: -22.05028497988652
+estimate after ansatz modification: -22.05028497988652
+iteration 58331/50000: current estimate: -22.055939121984956
+running for iter 5
+Running with seed: 1672
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.445891714805692
+estimate after ansatz modification: -11.445891714805692
+iteration 16666/50000: current estimate: -19.71805446265533
+estimate after ansatz modification: -19.71805446265533
+iteration 24999/50000: current estimate: -21.798664935734127
+estimate after ansatz modification: -21.798664935734127
+iteration 33332/50000: current estimate: -22.00910224711642
+estimate after ansatz modification: -22.00910224711642
+iteration 41665/50000: current estimate: -22.026468735114324
+estimate after ansatz modification: -22.026468735114324
+iteration 49998/50000: current estimate: -22.033386439610403
+estimate after ansatz modification: -22.033386439610403
+iteration 58331/50000: current estimate: -22.038953054445393
+running for iter 6
+Running with seed: 630
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.573825600068439
+estimate after ansatz modification: -11.573825600068439
+iteration 16666/50000: current estimate: -19.760419199053466
+estimate after ansatz modification: -19.760419199053466
+iteration 24999/50000: current estimate: -21.66730826063328
+estimate after ansatz modification: -21.66730826063328
+iteration 33332/50000: current estimate: -21.937474211982074
+estimate after ansatz modification: -21.937474211982074
+iteration 41665/50000: current estimate: -21.99944365352673
+estimate after ansatz modification: -21.99944365352673
+iteration 49998/50000: current estimate: -22.028002399153525
+estimate after ansatz modification: -22.028002399153525
+iteration 58331/50000: current estimate: -22.036816805406264
+running for iter 7
+Running with seed: 429
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.719635605940578
+estimate after ansatz modification: -11.719635605940578
+iteration 16666/50000: current estimate: -21.541196207066946
+estimate after ansatz modification: -21.541196207066946
+iteration 24999/50000: current estimate: -21.902255365206617
+estimate after ansatz modification: -21.902255365206617
+iteration 33332/50000: current estimate: -22.006573933257567
+estimate after ansatz modification: -22.006573933257567
+iteration 41665/50000: current estimate: -22.02883844156737
+estimate after ansatz modification: -22.02883844156737
+iteration 49998/50000: current estimate: -22.04119166968226
+estimate after ansatz modification: -22.04119166968226
+iteration 58331/50000: current estimate: -22.049267354263222
+running for iter 8
+Running with seed: 131
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.889428209356293
+estimate after ansatz modification: -11.889428209356293
+iteration 16666/50000: current estimate: -17.894942764589437
+estimate after ansatz modification: -17.894942764589437
+iteration 24999/50000: current estimate: -20.338558749838636
+estimate after ansatz modification: -20.338558749838636
+iteration 33332/50000: current estimate: -20.98308451378891
+estimate after ansatz modification: -20.98308451378891
+iteration 41665/50000: current estimate: -21.970074082362096
+estimate after ansatz modification: -21.970074082362096
+iteration 49998/50000: current estimate: -22.0099153401706
+estimate after ansatz modification: -22.0099153401706
+iteration 58331/50000: current estimate: -22.02147927129723
+running for iter 9
+Running with seed: 1615
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.776821718885776
+estimate after ansatz modification: -11.776821718885776
+iteration 16666/50000: current estimate: -19.85029355188246
+estimate after ansatz modification: -19.85029355188246
+iteration 24999/50000: current estimate: -21.879102961215235
+estimate after ansatz modification: -21.879102961215235
+iteration 33332/50000: current estimate: -21.993716850382125
+estimate after ansatz modification: -21.993716850382125
+iteration 41665/50000: current estimate: -22.006387671424385
+estimate after ansatz modification: -22.006387671424385
+iteration 49998/50000: current estimate: -22.014732145102606
+estimate after ansatz modification: -22.014732145102606
+iteration 58331/50000: current estimate: -22.02173917433623
+running for iter 10
+Running with seed: 432
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.435377641507829
+estimate after ansatz modification: -11.435377641507829
+iteration 16666/50000: current estimate: -18.899473737617747
+estimate after ansatz modification: -18.899473737617747
+iteration 24999/50000: current estimate: -21.679768858328075
+estimate after ansatz modification: -21.679768858328075
+iteration 33332/50000: current estimate: -21.958404887935682
+estimate after ansatz modification: -21.958404887935682
+iteration 41665/50000: current estimate: -22.007752784649956
+estimate after ansatz modification: -22.007752784649956
+iteration 49998/50000: current estimate: -22.029224579296468
+estimate after ansatz modification: -22.029224579296468
+iteration 58331/50000: current estimate: -22.03748908017386
+running for iter 11
+Running with seed: 1254
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -10.999997605210618
+estimate after ansatz modification: -10.999997605210618
+iteration 16666/50000: current estimate: -19.980319639495317
+estimate after ansatz modification: -19.980319639495317
+iteration 24999/50000: current estimate: -21.566063843548182
+estimate after ansatz modification: -21.566063843548182
+iteration 33332/50000: current estimate: -21.910786386656973
+estimate after ansatz modification: -21.910786386656973
+iteration 41665/50000: current estimate: -21.989122664711562
+estimate after ansatz modification: -21.989122664711562
+iteration 49998/50000: current estimate: -22.02221620789866
+estimate after ansatz modification: -22.02221620789866
+iteration 58331/50000: current estimate: -22.034350190786153
+running for iter 12
+Running with seed: 1035
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.917192588262262
+estimate after ansatz modification: -11.917192588262262
+iteration 16666/50000: current estimate: -19.93377274291387
+estimate after ansatz modification: -19.93377274291387
+iteration 24999/50000: current estimate: -20.222188950505444
+estimate after ansatz modification: -20.222188950505444
+iteration 33332/50000: current estimate: -21.407196347130217
+estimate after ansatz modification: -21.407196347130217
+iteration 41665/50000: current estimate: -21.936201536210103
+estimate after ansatz modification: -21.936201536210103
+iteration 49998/50000: current estimate: -21.99038526768221
+estimate after ansatz modification: -21.99038526768221
+iteration 58331/50000: current estimate: -22.004321225132006
+running for iter 13
+Running with seed: 561
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.724083823430414
+estimate after ansatz modification: -11.724083823430414
+iteration 16666/50000: current estimate: -17.203516583507593
+estimate after ansatz modification: -17.203516583507593
+iteration 24999/50000: current estimate: -21.064326966671505
+estimate after ansatz modification: -21.064326966671505
+iteration 33332/50000: current estimate: -21.880050470062557
+estimate after ansatz modification: -21.880050470062557
+iteration 41665/50000: current estimate: -21.99749246310606
+estimate after ansatz modification: -21.99749246310606
+iteration 49998/50000: current estimate: -22.022327287119662
+estimate after ansatz modification: -22.022327287119662
+iteration 58331/50000: current estimate: -22.03838300729901
+running for iter 14
+Running with seed: 248
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.732075616003181
+estimate after ansatz modification: -11.732075616003181
+iteration 16666/50000: current estimate: -17.726652477413722
+estimate after ansatz modification: -17.726652477413722
+iteration 24999/50000: current estimate: -21.641583536099493
+estimate after ansatz modification: -21.641583536099493
+iteration 33332/50000: current estimate: -21.916117163999036
+estimate after ansatz modification: -21.916117163999036
+iteration 41665/50000: current estimate: -22.02667150915354
+estimate after ansatz modification: -22.02667150915354
+iteration 49998/50000: current estimate: -22.03742756493903
+estimate after ansatz modification: -22.03742756493903
+iteration 58331/50000: current estimate: -22.043082394138807
+running for iter 15
+Running with seed: 148
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.23158404969523
+estimate after ansatz modification: -11.23158404969523
+iteration 16666/50000: current estimate: -18.53509437537134
+estimate after ansatz modification: -18.53509437537134
+iteration 24999/50000: current estimate: -19.40468256960198
+estimate after ansatz modification: -19.40468256960198
+iteration 33332/50000: current estimate: -21.888820930618323
+estimate after ansatz modification: -21.888820930618323
+iteration 41665/50000: current estimate: -21.979112824790022
+estimate after ansatz modification: -21.979112824790022
+iteration 49998/50000: current estimate: -22.008963688424952
+estimate after ansatz modification: -22.008963688424952
+iteration 58331/50000: current estimate: -22.018789160515954
+running for iter 16
+Running with seed: 591
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.647272820490224
+estimate after ansatz modification: -11.647272820490224
+iteration 16666/50000: current estimate: -21.182085991351126
+estimate after ansatz modification: -21.182085991351126
+iteration 24999/50000: current estimate: -21.856354135307217
+estimate after ansatz modification: -21.856354135307217
+iteration 33332/50000: current estimate: -21.98004269091422
+estimate after ansatz modification: -21.98004269091422
+iteration 41665/50000: current estimate: -22.01312131310049
+estimate after ansatz modification: -22.01312131310049
+iteration 49998/50000: current estimate: -22.03096778167813
+estimate after ansatz modification: -22.03096778167813
+iteration 58331/50000: current estimate: -22.040763126087693
+running for iter 17
+Running with seed: 985
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.491832121248448
+estimate after ansatz modification: -11.491832121248448
+iteration 16666/50000: current estimate: -18.08671676655683
+estimate after ansatz modification: -18.08671676655683
+iteration 24999/50000: current estimate: -20.261508480436515
+estimate after ansatz modification: -20.261508480436515
+iteration 33332/50000: current estimate: -21.74719505968874
+estimate after ansatz modification: -21.74719505968874
+iteration 41665/50000: current estimate: -21.948131795736387
+estimate after ansatz modification: -21.948131795736387
+iteration 49998/50000: current estimate: -21.99892688642689
+estimate after ansatz modification: -21.99892688642689
+iteration 58331/50000: current estimate: -22.031026739803547
+running for iter 18
+Running with seed: 94
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.656033840899319
+estimate after ansatz modification: -11.656033840899319
+iteration 16666/50000: current estimate: -19.892012887685368
+estimate after ansatz modification: -19.892012887685368
+iteration 24999/50000: current estimate: -20.292429370156572
+estimate after ansatz modification: -20.292429370156572
+iteration 33332/50000: current estimate: -21.927812427001747
+estimate after ansatz modification: -21.927812427001747
+iteration 41665/50000: current estimate: -22.022608851414084
+estimate after ansatz modification: -22.022608851414084
+iteration 49998/50000: current estimate: -22.038032061674148
+estimate after ansatz modification: -22.038032061674148
+iteration 58331/50000: current estimate: -22.046744614415246
+running for iter 19
+Running with seed: 816
+Using COBYLA optimizer with 50000 total iterations, stopping every 8333 iterations for modifications
+iteration 8333/50000: current estimate: -11.747429750469601
+estimate after ansatz modification: -11.747429750469601
+iteration 16666/50000: current estimate: -21.1179050389504
+estimate after ansatz modification: -21.1179050389504
+iteration 24999/50000: current estimate: -21.831093457738376
+estimate after ansatz modification: -21.831093457738376
+iteration 33332/50000: current estimate: -21.988084912023268
+estimate after ansatz modification: -21.988084912023268
+iteration 41665/50000: current estimate: -22.03269704452675
+estimate after ansatz modification: -22.03269704452675
+iteration 49998/50000: current estimate: -22.045464224899206
+estimate after ansatz modification: -22.045464224899206
+iteration 58331/50000: current estimate: -22.054011496757465
+/home/damocleseos/.venvs/python3/fqip10/lib/python3.10/site-packages/qiskit/visualization/circuit/matplotlib.py:186: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+  self._figure = plt.figure()
+[-22.04285762504142, -22.043051631536475, -22.04895012299256, -22.046507969620638, -22.055939121984956, -22.038953054445393, -22.036816805406264, -22.049267354263222, -22.02147927129723, -22.02173917433623, -22.03748908017386, -22.034350190786153, -22.004321225132006, -22.03838300729901, -22.043082394138807, -22.018789160515954, -22.040763126087693, -22.031026739803547, -22.046744614415246, -22.054011496757465]
+minimum: -22.055939121984956
+/data/TUD/Q2/FQI-P/VQE_for_J1J2/run.py:149: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`). Consider using `matplotlib.pyplot.close()`.
+  plt.figure(figsize=(12, 8))
