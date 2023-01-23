@@ -72,11 +72,13 @@ class DynamicVQERunner:
         # number of iterations before adding a layer to the ansatz
         if add_layers_fresh and not large_gradient_add:
             if self.ansatz.name == "TwoLocal":
-                initial_reps = 18  # 40 parameters
+                initial_reps = 4  # 40 parameters
             elif self.ansatz.name == "FeulnerHartmann":
-                initial_reps = 7  # 39 parameters
+                initial_reps = 7 # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
+            if initial_reps > final_reps:
+                raise InvalidFinalRepError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
             if initial_reps != final_reps:
                 step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
@@ -321,6 +323,13 @@ class DynamicVQERunner:
 class SimultaneousGradientAndLayer(RuntimeError):
     """
         The feature of having the gradient-based dynamic VQE and the gradual addition of layers is not implemented yet
+    """
+    pass
+
+
+class InvalidFinalRepError(RuntimeError):
+    """
+        Raised if #final layers < #initial layers
     """
     pass
 
