@@ -128,7 +128,7 @@ class FeulnerHartmannAnsatz(Ansatz):
                         indParam += 1
                     qc.barrier()
             # print(numParams - indParam)
-            qc.draw(output='mpl', filename=f"{len(theta)}")
+            # qc.draw(output='mpl', filename=f"{len(theta)}")
 
         return qc
 

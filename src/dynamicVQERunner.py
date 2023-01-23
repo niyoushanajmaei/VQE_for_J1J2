@@ -109,9 +109,6 @@ class DynamicVQERunner:
             opt = ADAM(maxiter=step_iter, lr=lr, amsgrad=True)
         elif self.optimizer == "COBYLA":
             opt = COBYLA(maxiter=step_iter, tol=1e-6)
-            #print(opt.is_initial_point_ignored)
-            #print(opt.is_initial_point_supported)
-            #quit()
         else:
             raise InvalidOptimizerError
         print(f"Using {self.optimizer} optimizer with {self.totalMaxIter} total iterations, stopping every {step_iter} iterations for modifications")
