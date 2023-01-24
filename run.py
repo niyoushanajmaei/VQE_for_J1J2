@@ -76,7 +76,7 @@ def testDynamicRunner():
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "FeulnerHartmann"
-    layers = 4
+    layers = 7
     # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
     optimizer = "COBYLA"
 
