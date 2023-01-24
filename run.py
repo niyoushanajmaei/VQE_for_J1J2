@@ -237,13 +237,13 @@ def analysis_t_test():
     exact = -22.138
 
     mean_with_layer_adding = np.mean(data_with_layer_adding)
-    var_with_layer_adding = np.var(data_with_layer_adding)
+    std_with_layer_adding = np.std(data_with_layer_adding)
     mean_without_layer_adding = np.mean(data_without_layer_adding)
-    var_without_layer_adding = np.var(data_without_layer_adding)
+    std_without_layer_adding = np.std(data_without_layer_adding)
 
-    with open("results/COBYLA_layer_adding/analysis/COBYLA_t-test.txt","w") as f:
-        f.write(f"without layer adding: mean={mean_without_layer_adding}, var={var_without_layer_adding}")
-        f.write(f"with layer adding: mean={mean_with_layer_adding}, var={var_with_layer_adding}")
+    with open("results/COBYLA_layer_adding/analysis/COBYLA_t-test.txt", "w") as f:
+        f.write(f"without layer adding: mean={mean_without_layer_adding}, std={std_without_layer_adding}\n")
+        f.write(f"with layer adding: mean={mean_with_layer_adding}, std={std_with_layer_adding}\n")
         # Welch's t-test
         f.write(str(stats.ttest_ind(data_with_layer_adding, data_without_layer_adding, equal_var=False)))
 
