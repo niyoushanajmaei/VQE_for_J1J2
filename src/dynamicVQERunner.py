@@ -74,7 +74,7 @@ class DynamicVQERunner:
             if self.ansatz.name == "TwoLocal":
                 initial_reps = 4  # 40 parameters
             elif self.ansatz.name == "FeulnerHartmann":
-                initial_reps = 7 # 39 parameters
+                initial_reps = 1  # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
             if initial_reps > final_reps:
