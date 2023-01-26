@@ -44,9 +44,10 @@ class DynamicVQERunner:
         if self.N == 12:
             self.exactEnergy = -22.138
         else:
-            self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
+            self.exactEnergy = -15.83736
+            # self.exactEnergy = Model.getExactEnergy(self.hamiltonianMatrix)
 
-    def run_dynamic_vqe(self, step_iter=np.inf, small_gradient_deletion=False, small_gradient_add_to_end=False,
+    def run_dynamic_vqe(self, step_iter=np.inf, gradient_beta=None, small_gradient_deletion=False, small_gradient_add_to_end=False,
                         random_pseudo_removal=False, add_layers_fresh=False, add_layers_duplicate=False,
                         large_gradient_add=False):
         """
@@ -76,12 +77,16 @@ class DynamicVQERunner:
                 initial_reps = 1  # 39 parameters
             else:
                 raise UnidentifiedAnsatzError
+            if initial_reps > final_reps:
+                raise InvalidFinalRepError
             self.initialise_ansatz(self.ansatz.name, self.ansatz.N, initial_reps) # reinitialize ansatz
             if initial_reps != final_reps:
                 step_iter = int(self.totalMaxIter / (final_reps - initial_reps))
             else:
                 step_iter = self.totalMaxIter
         elif large_gradient_add and add_layers_fresh:
+            raise SimultaneousGradientAndLayer
+        elif small_gradient_deletion and add_layers_fresh:
             raise SimultaneousGradientAndLayer
         else:
             # number of iterations before stopping the optimizer for modifications
@@ -106,6 +111,9 @@ class DynamicVQERunner:
             opt = ADAM(maxiter=step_iter, lr=lr, amsgrad=True)
         elif self.optimizer == "COBYLA":
             opt = COBYLA(maxiter=step_iter, tol=1e-6)
+            #print(opt.is_initial_point_ignored)
+            #print(opt.is_initial_point_supported)
+            #quit()
         else:
             raise InvalidOptimizerError
         print(f"Using {self.optimizer} optimizer with {self.totalMaxIter} total iterations, stopping every {step_iter} iterations for modifications")
@@ -118,16 +126,18 @@ class DynamicVQERunner:
             values.append(mean)
             # print(f"Current Estimated Energy: {mean}")
 
+        randomised_in_last_step = False
         for i in range(0, self.totalMaxIter, step_iter):
             # print(initialTheta)
             vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
                       quantum_instance=qi, include_custom=True)
-            if initialTheta:
+            if initialTheta and not randomised_in_last_step:
                 print("estimate after ansatz modification:", vqe.get_energy_evaluation(operator=self.hamiltonian)(initialTheta))
             result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
 
+            randomised_in_last_step = False
             if large_gradient_add:
                 # do modifications?
                 # still have initial theta at this stage, can process finalTheta and initialTheta
@@ -135,12 +145,16 @@ class DynamicVQERunner:
                 if initialTheta:
                     paramGrad = np.abs(np.array(finalTheta) - np.array(initialTheta))
                     mx = np.max(paramGrad)
-                    assert mx  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                    if mx:  # make sure it isn't zero, since we will be using it to normalize paramGrad
+                        paramGrad = paramGrad / mx
+                        self.ansatz.add_large_gradient_gate_end(paramGrad, beta=gradient_beta)
+                    else:
+                        finalTheta = self.randomized_parameters(finalTheta, 1)
+                        self.ansatz.update_parameters(finalTheta)
+                        randomised_in_last_step = True
                     # print(paramGrad)
-                    paramGrad = paramGrad / mx
-                    # print(paramGrad)
-                    self.ansatz.add_large_gradient_gate_end(paramGrad)
                 initialTheta = self.ansatz.get_parameters()
+                print(f"Current number of parameters: {len(initialTheta)}")
             if add_layers_fresh:
                 if i+step_iter < self.totalMaxIter:
                     # change both the ansatz and the theta accordingly
@@ -151,10 +165,24 @@ class DynamicVQERunner:
                     finalTheta = self.ansatz.add_fresh_parameter_layer(finalTheta)
                     self.ansatz.update_parameters(finalTheta)
                     #print(f"updated final theta: {finalTheta}")
-                    self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
+                    # self.ansatz.circuit.draw(output='mpl', filename=f"graphs/dynamic_ansatz/before_run_{len(finalTheta)}")
                     #print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                     #      f" {len(finalTheta)}")
                     initialTheta = finalTheta
+            if small_gradient_deletion:
+                self.ansatz.update_parameters(finalTheta)
+                if initialTheta:
+                    param_grad = np.abs(np.array(finalTheta) - np.array(initialTheta))
+                    max_grad = np.max(param_grad)
+                    try:
+                        # print(paramGrad)
+                        param_grad = param_grad / max_grad
+                        # print(paramGrad)
+                        self.ansatz.delete_small_gradient_gate(param_grad)
+                        print()
+                    except(ZeroDivisionError):
+                        print(f"Encountered division by zero at iter {i+step_iter}. Did not delete any gates.")
+                initialTheta = self.ansatz.get_parameters()
 
         self.ansatz.update_parameters(finalTheta)
         # save convergence plot for the run
@@ -163,8 +191,16 @@ class DynamicVQERunner:
         optimizers = [self.optimizer]
         fileName = f"{self.periodicity}-{self.m}x{self.n}-{self.ansatz}-{self.optimizer}-{self.totalMaxIter}iters"
         self.plotConvergences(counts, values, optimizers, fileName=fileName)
+        self.ansatz.circuit.draw(output='mpl', filename=f"{len(finalTheta)}")
 
         return result
+
+    @staticmethod
+    def randomized_parameters(currParams, numModifications):
+        newParams = currParams.copy()
+        for i in np.random.randint(0, len(newParams), numModifications):
+            newParams[i] = newParams[i] * (np.random.random() * 4 - 2)
+        return newParams
 
     def initialise_ansatz(self, name, N, reps):
         if name == "FeulnerHartmann":
@@ -173,6 +209,13 @@ class DynamicVQERunner:
             self.ansatz = TwoLocalAnsatz(N, reps)
         else:
             raise UnidentifiedAnsatzError
+
+    @staticmethod
+    def randomized_parameters(currParams, numModifications):
+        newParams = currParams.copy()
+        for i in np.random.randint(0, len(newParams), numModifications):
+            newParams[i] = newParams[i] * (np.random.random()*2-1)
+        return newParams
 
     def plotConvergences(self, counts, values, optimizers, fileName="convergenceGraph.png"):
         """
@@ -206,9 +249,87 @@ class DynamicVQERunner:
         :return: the final ansatz
         """
 
+    def run_interrupt_test(self, step_iter, random_restart=False):
+        """
+        A function to check our other results.
+        Runs the VQE algorithm by interrupting it every step_iter iterations like in the dynamic VQE but does not do
+        any modifications.
+
+        :param random_restart: if True, no initial point will be passed to the optimizer after interruptions
+        """
+        seed = self.seed
+        print(f"Running with seed: {seed}")
+        algorithm_globals.random_seed = seed
+        qi = QuantumInstance(VQERunner.get_backend(simulate=self.simulation), seed_transpiler=seed, seed_simulator=seed)
+
+        ansatz = self.ansatz.circuit
+        initialTheta = self.ansatz.theta
+        finalTheta = self.ansatz.theta
+
+        if self.optimizer == "SLSQP":
+            opt = SLSQP(maxiter=step_iter)
+        elif self.optimizer == "SPSA":
+            # TODO for SPSA, investigate the usage of a user defined gradient
+            opt = SPSA(maxiter=step_iter)
+        elif self.optimizer == "AMSGRAD":
+            lr = 0.009
+            opt = ADAM(maxiter=step_iter, lr=lr, amsgrad=True)
+        elif self.optimizer == "COBYLA":
+            opt = COBYLA(maxiter=step_iter, tol=1e-6)
+            # print(opt.is_initial_point_ignored)
+            # print(opt.is_initial_point_supported)
+            # quit()
+        else:
+            raise InvalidOptimizerError
+        print(
+            f"Using {self.optimizer} optimizer with {self.totalMaxIter} total iterations, stopping every {step_iter} iterations for modifications")
+
+        counts = []
+        values = []
+
+        def store_intermediate_results(evalCount, parameters, mean, std):
+            counts.append(evalCount)
+            values.append(mean)
+            # print(f"Current Estimated Energy: {mean}")
+
+        randomised_in_last_step = False
+        for i in range(0, self.totalMaxIter, step_iter):
+            # print(initialTheta)
+            if random_restart and i != 0:  # no initial_point passed
+                vqe = VQE(ansatz, optimizer=opt, callback=store_intermediate_results,
+                          quantum_instance=qi, include_custom=True)
+            else:
+                vqe = VQE(ansatz, optimizer=opt, initial_point=initialTheta, callback=store_intermediate_results,
+                          quantum_instance=qi, include_custom=True)
+            if initialTheta and not randomised_in_last_step:
+                print("estimate after ansatz modification:",
+                      vqe.get_energy_evaluation(operator=self.hamiltonian)(initialTheta))
+            result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
+            print(f"iteration {i + step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
+            initialTheta = result.optimal_point.tolist()
+
+        self.ansatz.update_parameters(initialTheta)
+        # save convergence plot for the run
+        counts = [np.asarray(counts)]
+        values = [np.asarray(values)]
+        optimizers = [self.optimizer]
+        fileName = f"{self.periodicity}-{self.m}x{self.n}-{self.ansatz}-{self.optimizer}-{self.totalMaxIter}iters"
+        self.plotConvergences(counts, values, optimizers, fileName=fileName)
+        self.ansatz.circuit.draw(output='mpl', filename=f"{len(self.ansatz.theta)}")
+
+        return result
+
+
 class SimultaneousGradientAndLayer(RuntimeError):
     """
         The feature of having the gradient-based dynamic VQE and the gradual addition of layers is not implemented yet
+    """
+    pass
+
+
+class InvalidFinalRepError(RuntimeError):
+    """
+        Raised if #final layers < #initial layers
     """
     pass
 

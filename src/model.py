@@ -214,7 +214,9 @@ class Model:
     @staticmethod
     def getExactEnergy(hamiltonianMatrix):
         # TODO: approximate the eigenvalue for larger systems
-        exactEnergy = np.min(np.linalg.eigvals(hamiltonianMatrix))
+        eigenValues = np.sort(np.real(np.linalg.eigvals(hamiltonianMatrix)))
+        exactEnergy = eigenValues[0]
+        # print(eigenValues)
         return exactEnergy
 
 

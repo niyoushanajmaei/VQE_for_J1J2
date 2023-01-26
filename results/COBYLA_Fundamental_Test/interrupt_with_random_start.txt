@@ -1,0 +1,8 @@
+The results of interrupting the algorithm, not changing the ansatz but starting at a random point
+
+    'optimal_value': -5.883300489584752,
+    'optimizer_evals': None,
+    'optimizer_result': None,
+    'optimizer_time': 16.471709966659546}
+The algorithm took 1700.16s
+exactResult: -22.138
