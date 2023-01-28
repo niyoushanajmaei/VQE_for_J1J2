@@ -76,7 +76,7 @@ def testDynamicRunner():
     seed = 50
     # ansatz in {"TwoLocal", "FeulnerHartmann"}
     ansatz = "FeulnerHartmann"
-    layers = 7
+    layers = 2
     # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
     optimizer = "SLSQP"
 
@@ -86,8 +86,8 @@ def testDynamicRunner():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
-    #result = vqe_runner.run_dynamic_vqe(step_iter=100, large_gradient_add=True, gradient_beta=0.1) # pass gradient_beta=None for adding one gate
-    result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
+    result = vqe_runner.run_dynamic_vqe(step_iter=100, large_gradient_add=True, gradient_beta=0.2) # pass gradient_beta=None for adding one gate
+    #result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
     print(result)
 
     print(f"The algorithm took {time.time()-start:.2f}s")
@@ -116,7 +116,7 @@ def check_local_minima_hypothesis():
     layers = 7
     ansatz = "FeulnerHartmann"
     optimal_values = []
-    num = 9
+    num = 5
     num_bins = 20
 
     for i in range(num):
@@ -125,7 +125,7 @@ def check_local_minima_hypothesis():
         seed = np.random.randint(100*num, size=1)[0]
 
         # optimizer in {"SLSQP", "SPSA", "AMSGRAD", "COBYLA"}
-        optimizer = "COBYLA"
+        optimizer = "SLSQP"
 
         m = 3
         n = 4
@@ -133,13 +133,13 @@ def check_local_minima_hypothesis():
         J2 = 0.5
 
         vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False, ansatz=ansatz,
-                                      optimizer=optimizer, totalMaxIter=50000)
+                                      optimizer=optimizer, totalMaxIter=1000)
         # result = vqe_runner.run_dynamic_vqe(step_iter=10 ,large_gradient_add=True)
         result = vqe_runner.run_dynamic_vqe(add_layers_fresh=True)
         optimal_values.append(result.optimal_value)
 
-        with open(f"results/COBYLA_layer_adding/dynamic_results_TL_open_{layers}", "a") as f:
-            f.write(f"{seed},{result.optimal_value},\n")
+        with open(f"results/local_minima/3x4/static/dynamic_results_TL_open_{layers}_4", "a") as f:
+            f.write(f"{result.optimal_value}, ")
 
         plt.close()
 
@@ -150,9 +150,9 @@ def check_local_minima_hypothesis():
     plt.hist(optimal_values, bins=num_bins, color='green')
 
     plt.title(f'Distribution of results for running the {ansatz} ansatz with {layers} layers, {num} times.')
-    plt.savefig(f"results/local_minima/3x4/dynamic/dynamic_distribution_TL_open_{layers}")
+    plt.savefig(f"results/local_minima/3x4/static/dynamic_results_TL_open_{layers}_4")
 
-    with open(f"results/local_minima/3x4/dynamic/dynamic_results_TL_open_{layers}", "a") as f:
+    with open(f"results/local_minima/3x4/static/dynamic_results_TL_open_{layers}_4", "a") as f:
         f.write(f"optimal values: ")
         for e in optimal_values:
             f.write(f"{e}, ")
@@ -174,7 +174,7 @@ def interrupt_with_no_mod_test():
     J2 = 0.5
 
     vqe_runner = DynamicVQERunner(m, n, J1, J2, h=0, seed=seed, ansatz_rep=layers, periodic_hamiltonian=False,
-                                  ansatz=ansatz, optimizer=optimizer, totalMaxIter=50000)
+                                  ansatz=ansatz, optimizer=optimizer, totalMaxIter=1000)
     result = vqe_runner.run_interrupt_test(step_iter=5000, random_restart=False)
     print(result)
 
@@ -184,22 +184,12 @@ def interrupt_with_no_mod_test():
 
 
 def analysis_box_plots():
-    data_with_layer_adding = [-22.04285762504142, -22.043051631536475, -22.04895012299256, -22.046507969620638,
-                              -22.055939121984956, -22.038953054445393, -22.036816805406264, -22.049267354263222,
-                              -22.02147927129723, -22.02173917433623, -22.03748908017386, -22.034350190786153,
-                              -22.004321225132006, -22.03838300729901, -22.043082394138807, -22.018789160515954,
-                              -22.040763126087693, -22.031026739803547, -22.046744614415246, -22.054011496757465,
-                              -22.04681166036868, -22.01876879302441, -22.022424345706686, -22.028495542581346,
-                              -22.0331529224908, -22.023166523560953, -22.031526589867823, -21.858514861437293,
-                              -22.05837374675301, -22.02925826826033]
-    data_without_layer_adding = [-21.618530732586365, -21.77193049540494, -21.70085885399603, -21.71811533078925,
-                                 -21.731695841841024, -21.373700294426055, -21.77882427409699, -21.509270286134853,
-                                 -21.655463592564406, -21.790462830042827, -21.346307934171893, -21.515015189418286,
-                                 -21.63542725556709, -21.632506477532665, -21.732434649625926, -21.553376717610043,
-                                 -21.59711848953663, -20.106703324418167, -21.694702593180377, -21.671431372292826,
-                                 -21.691958863706233, -21.65798436557029, -21.181150253104924, -21.51224816066623,
-                                 -21.66259454427485, -21.61722904073145, -21.532362946278372, -21.704361648329638,
-                                 -21.492660873484482, -21.6167506497758]
+    with open("stat_data/cobyla_with_layer_adding.txt","r") as f:
+        data_with_layer_adding = f.read().split(',')
+
+    with open("stat_data/cobyla_without_layer_adding.txt","r") as f:
+        data_without_layer_adding = f.read().split(',')
+
     exact = -22.138
 
     # box plots
@@ -218,22 +208,12 @@ def analysis_box_plots():
 
 
 def analysis_t_test():
-    data_with_layer_adding = [-22.04285762504142, -22.043051631536475, -22.04895012299256, -22.046507969620638,
-                              -22.055939121984956, -22.038953054445393, -22.036816805406264, -22.049267354263222,
-                              -22.02147927129723, -22.02173917433623, -22.03748908017386, -22.034350190786153,
-                              -22.004321225132006, -22.03838300729901, -22.043082394138807, -22.018789160515954,
-                              -22.040763126087693, -22.031026739803547, -22.046744614415246, -22.054011496757465,
-                              -22.04681166036868, -22.01876879302441, -22.022424345706686, -22.028495542581346,
-                              -22.0331529224908, -22.023166523560953, -22.031526589867823, -21.858514861437293,
-                              -22.05837374675301, -22.02925826826033]
-    data_without_layer_adding = [-21.618530732586365, -21.77193049540494, -21.70085885399603, -21.71811533078925,
-                                 -21.731695841841024, -21.373700294426055, -21.77882427409699, -21.509270286134853,
-                                 -21.655463592564406, -21.790462830042827, -21.346307934171893, -21.515015189418286,
-                                 -21.63542725556709, -21.632506477532665, -21.732434649625926, -21.553376717610043,
-                                 -21.59711848953663, -20.106703324418167, -21.694702593180377, -21.671431372292826,
-                                 -21.691958863706233, -21.65798436557029, -21.181150253104924, -21.51224816066623,
-                                 -21.66259454427485, -21.61722904073145, -21.532362946278372, -21.704361648329638,
-                                 -21.492660873484482, -21.6167506497758]
+    with open("stat_data/cobyla_with_layer_adding.txt", "r") as f:
+        data_with_layer_adding = f.read().split(',')
+
+    with open("stat_data/cobyla_without_layer_adding.txt", "r") as f:
+        data_without_layer_adding = f.read().split(',')
+
     exact = -22.138
 
     mean_with_layer_adding = np.mean(data_with_layer_adding)
@@ -248,6 +228,44 @@ def analysis_t_test():
         f.write(str(stats.ttest_ind(data_with_layer_adding, data_without_layer_adding, equal_var=False)))
 
 
+def slsqp_cobyla_box_plots():
+    with open("stat_data/cobyla_with_layer_adding.txt", "r") as f:
+        cobyla_with_layer_adding = f.read().split(',')
+        cobyla_with_layer_adding = list(map(float, cobyla_with_layer_adding))
+
+    with open("stat_data/cobyla_without_layer_adding.txt", "r") as f:
+        cobyla_without_layer_adding = f.read().split(',')
+        cobyla_without_layer_adding = list(map(float, cobyla_without_layer_adding))
+
+    with open("stat_data/slsqp_with_layer_adding.txt", "r") as f:
+        slsqp_with_layer_adding = f.read().split(',')
+        slsqp_with_layer_adding = list(map(float, slsqp_with_layer_adding))
+
+    with open("stat_data/slsqp_without_layer_adding.txt", "r") as f:
+        slsqp_without_layer_adding = f.read().split(',')
+        slsqp_without_layer_adding = list(map(float, slsqp_without_layer_adding))
+
+    exact = -22.138
+
+    # box plots
+    data_dict1 = {'cobyla without layer adding': cobyla_without_layer_adding,
+         'cobyla with layer adding': cobyla_with_layer_adding}
+    data_dict2 = { 'slsqp without layer adding': slsqp_without_layer_adding,
+                 'slsqp with layer adding': slsqp_with_layer_adding}
+
+    fig, ax = plt.subplots()
+    ax.boxplot(data_dict2.values())
+    ax.set_xticklabels(data_dict2.keys())
+    line = plt.axhline(exact, c='r', linestyle=":")
+    line.set_label("Exact Energy")
+    plt.legend()
+    plt.ylim([-22.2, -21.8])
+
+    plt.savefig('stat_data/slsqp_box_plot.png')
+    plt.close()
+
+
+
 
 if __name__ == "__main__":
     #tune_adam()
@@ -256,4 +274,6 @@ if __name__ == "__main__":
     #check_local_minima_hypothesis()
     #interrupt_with_no_mod_test()
     #analysis_box_plots()
-    analysis_t_test()
+    #analysis_t_test()
+    slsqp_cobyla_box_plots()
+    #slsqp_cobyla_t_test()
