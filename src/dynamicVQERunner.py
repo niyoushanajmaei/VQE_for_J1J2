@@ -169,6 +169,14 @@ class DynamicVQERunner:
                     #print(f"Added one layer to the ansatz, current reps: {self.ansatz.reps}, current number of parameter:"
                     #      f" {len(finalTheta)}")
                     initialTheta = finalTheta
+                else:
+                    print("Letting it converge")
+                    opt2 = COBYLA(maxiter=50000, tol=1e-6)
+                    vqe = VQE(ansatz, optimizer=opt2, initial_point=finalTheta, callback=store_intermediate_results,
+                      quantum_instance=qi, include_custom=True)
+                    result = vqe.compute_minimum_eigenvalue(operator=self.hamiltonian)
+                    print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
+                    finalTheta = result.optimal_point.tolist()
             if small_gradient_deletion:
                 self.ansatz.update_parameters(finalTheta)
                 if initialTheta:
