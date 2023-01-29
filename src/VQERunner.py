@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from qiskit import Aer, QuantumCircuit
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.algorithms import VQE
-from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM
+from qiskit.algorithms.optimizers import SLSQP, SPSA, ADAM, COBYLA
 from qiskit.circuit.library import TwoLocal
 
 from src.vqe_algorithm.ansatze.FeulnerHartmannAnsatz import FeulnerHartmannAnsatz
@@ -137,6 +137,7 @@ class VQERunner:
         plt.figure(figsize=(12, 8))
         for i, optimizer in enumerate(optimizers):
             plt.plot(counts[i], values[i], label=optimizer)
+            plt.plot([], [], ' ', label=f"Final VQE Estimate for {optimizer}: {np.round(values[i][-1], 6)}")
 
         # plotting exact value
         plt.axhline(y=Model.getExactEnergy(self.hamiltonianMatrix), color='r', linestyle='-', label="exact energy")
@@ -144,6 +145,7 @@ class VQERunner:
         plt.xlabel('Eval count')
         plt.ylabel('Energy')
         plt.title('Energy convergence plot')
+
         plt.legend(loc='upper right')
         plt.savefig(f"graphs/{fileName} - {strftime('%Y-%m-%d %H%M', localtime())}")
 
@@ -152,10 +154,11 @@ class VQERunner:
         Runs the VQE algorithm with a list of optimizers and plots the convergence graphs
 
         """
-        twolocal = TwoLocalAnsatz(self.N)
+        #twolocal = TwoLocalAnsatz(self.N)
         feulner = FeulnerHartmannAnsatz(self.N)
-        ansatze = {"twoLocal": twolocal.circuit}
-        optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=1000), ADAM(maxiter=1000, amsgrad=True, lr=0.009)]
+        ansatze = {"Feulner": feulner.circuit}
+        #optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=1000), ADAM(maxiter=1000, amsgrad=True, lr=0.009)]
+        optimizers = [SLSQP(maxiter=1000), COBYLA(maxiter=150000)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed

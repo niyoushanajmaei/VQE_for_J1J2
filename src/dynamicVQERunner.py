@@ -137,6 +137,8 @@ class DynamicVQERunner:
             print(f"iteration {i+step_iter}/{self.totalMaxIter}: current estimate: {result.optimal_value}")
             finalTheta = result.optimal_point.tolist()
 
+            self.ansatz.circuit.draw(output='mpl', filename=f"{len(finalTheta)}")
+
             randomised_in_last_step = False
             if large_gradient_add:
                 # do modifications?
