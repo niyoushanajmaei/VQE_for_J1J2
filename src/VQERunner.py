@@ -140,7 +140,7 @@ class VQERunner:
             plt.plot([], [], ' ', label=f"Final VQE Estimate for {optimizer}: {np.round(values[i][-1], 6)}")
 
         # plotting exact value
-        plt.axhline(y=Model.getExactEnergy(self.hamiltonianMatrix), color='r', linestyle='-', label="exact energy")
+        plt.axhline(y=Model.getExactEnergy(self.hamiltonianMatrix), color='r', linestyle='-', label="exact energy = -15.837 ")
 
         plt.xlabel('Eval count')
         plt.ylabel('Energy')
@@ -158,7 +158,7 @@ class VQERunner:
         feulner = FeulnerHartmannAnsatz(self.N)
         ansatze = {"Feulner": feulner.circuit}
         #optimizers = [SLSQP(maxiter=1000), SPSA(maxiter=1000), ADAM(maxiter=1000, amsgrad=True, lr=0.009)]
-        optimizers = [SLSQP(maxiter=1000), COBYLA(maxiter=150000)]
+        optimizers = [SLSQP(maxiter=1000), COBYLA(maxiter=250000), SPSA(maxiter=250000), ADAM(maxiter=1000, amsgrad=True, lr=0.009), ADAM(maxiter=1000, amsgrad=False, lr=0.009)]
 
         seed = self.seed
         algorithm_globals.random_seed = seed
@@ -185,8 +185,9 @@ class VQERunner:
 
                 convergeCnts[i] = np.asarray(counts)
                 convergeVals[i] = np.asarray(values)
-                optimizerNames.append(type(optimizer).__name__)
+                #optimizerNames.append(type(optimizer).__name__)
 
+            optimizerNames = ["SLSQP", "COBYLA", "SPSA", "ADAM", "AMSGrad"]
             self.plotConvergences(convergeCnts, convergeVals, optimizerNames, fileName=f"{name}")
 
 
